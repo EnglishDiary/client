@@ -1,5 +1,7 @@
+<script setup>
+import WordSearchResult from '@/components/WordSearchResult.vue'
+</script>
+
 <template>
-    <div>
-        워드뷰
-    </div>
+    <WordSearchResult />
 </template>
