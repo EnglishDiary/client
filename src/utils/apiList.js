@@ -10,7 +10,13 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_URL}/word/test`,
         desc: '테스트용'
-    }
+    },
+    FIND_WORD: (word) => ({
+        method: GET,
+        path: `${API_SERVER_URL}/word/${word}`,
+        desc: '단어 조회'
+    }),
+
 }
 
 export { API_LIST };
