@@ -16,6 +16,11 @@ const API_LIST = {
         path: `${API_SERVER_URL}/word/${word}`,
         desc: '단어 조회'
     }),
+    SAVE_WORD: (word) => ({
+        method: POST,
+        path: `${API_SERVER_URL}/word/save/${word}`,
+        desc: '단어 저장'
+    })
 
 }
 
