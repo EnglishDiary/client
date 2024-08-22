@@ -7,13 +7,12 @@ import { apiCall } from '@/utils/apiCall'
 const word = ref('')
 const wordDetails = ref({})
 const audio = ref(new Audio())
-const activeTab = ref('')
+const activeTab = ref(0)
 
 const findWord = async () => {
     const result = await apiCall(API_LIST.FIND_WORD(word.value))
     if (result.status) {
         wordDetails.value = result.data[0]
-        activeTab.value = result.data[0].meanings[0].partOfSpeech
     }
 }
 
@@ -32,13 +31,53 @@ const identifyCountry = (audioUrl) => {
     }
 }
 
-const removeDefinition = (partOfSpeech, index) => {
-    const meanigns = wordDetails.value.meanings
-    const definitions = meanigns.find((item) => {
-        return item.partOfSpeech === partOfSpeech
-    }).definitions
+const removeDefinition = (meaning, index) => {
+    meaning.definitions.splice(index, 1)
+}
 
-    definitions.splice(index, 1)
+const addUserExample = (definition) => {
+    console.log('데피니 -> ', definition)
+    // userExamples.value.push('')
+
+    if (!definition.userExamples) {
+        definition.userExamples = []
+    }
+
+    definition.userExamples.push('')
+}
+
+const removeUserExample = (definition, index) => {
+    definition.userExamples.splice(index, 1)
+}
+
+const checkWordDetails = () => {
+    console.log(wordDetails.value)
+}
+
+const addNewWord = async () => {
+    // const newWord = wordDetails.value;
+    // console.log('뉴워드 등록정보 -> ', wordDetails.value);
+
+    // const partOfSpeechList = []
+    // const definitionList = []
+
+    // const meanings = newWord.meanings
+    // meanings.forEach(element => {
+    //     partOfSpeechList.push(element.partOfSpeech)
+    // })
+
+    // const definitions = newWord.definitions
+    // definitions.forEach(element => {
+    //     definitionList.push(element.definition)
+    // })    
+
+    console.log('워디 -> ', wordDetails.value)
+
+    const payload = {
+        jsonData: JSON.stringify(wordDetails.value)
+    }
+    const result = await apiCall(API_LIST.SAVE_WORD(wordDetails.value.word), payload)
+    console.log('api 호출 결과 -> ', result)
 }
 
 onMounted(() => {
@@ -73,18 +112,26 @@ onMounted(() => {
                     <q-tabs v-model="activeTab" dense class="text-grey" active-color="primary" indicator-color="primary"
                         align="justify" narrow-indicator>
                         <template v-for="(meaning, index) in wordDetails.meanings" :key="index">
-                            <q-tab :name="meaning.partOfSpeech" :label="meaning.partOfSpeech" />
+                            <q-tab :name="index" :label="meaning.partOfSpeech" />
                         </template>
                     </q-tabs>
 
                     <q-tab-panels v-model="activeTab" animated>
-                        <q-tab-panel v-for="(meaning, index) in wordDetails.meanings" :key="index"
-                            :name="meaning.partOfSpeech">
-                            <div v-for="(item, index) in meaning.definitions" :key="index">
+                        <q-tab-panel v-for="(meaning, index) in wordDetails.meanings" :key="index" :name="index">
+                            <div class="q-mt-xl" v-for="(item, index) in meaning.definitions" :key="index">
                                 <span>뜻{{ index + 1 }}.</span>
-                                <q-btn @click="removeDefinition(meaning.partOfSpeech, index)" flat
-                                    style="color: #FF0080" label="삭제하기" />
+                                <q-btn @click="removeDefinition(meaning, index)" flat style="color: #FF0080"
+                                    label="삭제" />
                                 <q-input v-model="item.definition" :dense="true" autogrow />
+
+                                <span>예문</span>
+                                <q-input v-if="item.example" v-model="item.example" :dense="true" autogrow />
+                                <template v-for="(el, elIdx) in item.userExamples" :key="elIdx">
+                                    <q-input v-model="item.userExamples[elIdx]" :dense="true" autogrow />
+                                    <q-btn @click="removeUserExample(item, elIdx)">X</q-btn>
+                                </template>
+                                <br>
+                                <q-btn @click="addUserExample(item)">예문 추가</q-btn>
                             </div>
                         </q-tab-panel>
                     </q-tab-panels>
@@ -97,4 +144,6 @@ onMounted(() => {
 
         </div>
     </div>
+    <q-btn @click="checkWordDetails">워드디테일 확인</q-btn>
+    <q-btn @click="addNewWord">단어등록</q-btn>
 </template>
