@@ -55,22 +55,6 @@ const checkWordDetails = () => {
 }
 
 const addNewWord = async () => {
-    // const newWord = wordDetails.value;
-    // console.log('뉴워드 등록정보 -> ', wordDetails.value);
-
-    // const partOfSpeechList = []
-    // const definitionList = []
-
-    // const meanings = newWord.meanings
-    // meanings.forEach(element => {
-    //     partOfSpeechList.push(element.partOfSpeech)
-    // })
-
-    // const definitions = newWord.definitions
-    // definitions.forEach(element => {
-    //     definitionList.push(element.definition)
-    // })    
-
     console.log('워디 -> ', wordDetails.value)
 
     const payload = {
@@ -79,10 +63,6 @@ const addNewWord = async () => {
     const result = await apiCall(API_LIST.SAVE_WORD(wordDetails.value.word), payload)
     console.log('api 호출 결과 -> ', result)
 }
-
-onMounted(() => {
-    console.log(`마운티드~~`)
-})
 
 </script>
 
@@ -135,13 +115,8 @@ onMounted(() => {
                             </div>
                         </q-tab-panel>
                     </q-tab-panels>
-
-
                 </q-card>
-
             </div>
-
-
         </div>
     </div>
     <q-btn @click="checkWordDetails">워드디테일 확인</q-btn>
