@@ -3,6 +3,7 @@ import MainView from '@/views/MainView.vue'
 import WordView from '@/views/WordView.vue'
 import LoginView from '@/views/LoginView.vue'
 import Layout from '@/components/Layout.vue'
+import WordList from '@/components/WordList.vue'
 
 
 const router = createRouter({
@@ -27,7 +28,11 @@ const router = createRouter({
           name: 'Word',
           component: WordView
         },
-        // 다른 라우트들을 여기에 추가할 수 있습니다.
+        {
+          path: 'word/list/mine',
+          name: 'WordList',
+          component: WordList
+        }
       ]
     }
   ]

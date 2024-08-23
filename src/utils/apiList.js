@@ -20,7 +20,12 @@ const API_LIST = {
         method: POST,
         path: `${API_SERVER_URL}/word/save/${word}`,
         desc: '단어 저장'
-    })
+    }),
+    GET_USER_WORDS: {
+        method: GET,
+        path: `${API_SERVER_URL}/word/list`,
+        desc: '유저 단어 목록 조회'
+    }
 
 }
 
