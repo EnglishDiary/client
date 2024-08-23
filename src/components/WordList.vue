@@ -1,4 +1,6 @@
 <script setup>
+import WordEditting from './WordEditting.vue'
+
 import { ref, onMounted } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
@@ -10,25 +12,52 @@ onMounted(async () => {
     const result = await apiCall(API_LIST.GET_USER_WORDS)
     const jsonData = JSON.parse(result.data).list
 
-    jsonData.forEach(element => {
-        element.activeTab = 0
+    jsonData.forEach(word => {
+        word.activeTab = 0
+        word.isEditting = false
     })
 
     console.log('유저 단어 조회 결과 -> ', jsonData)
     wordList.value = jsonData
 })
 
+const editWord = (word) => {
+    word.isEditting = true
+}
+
+const completeEdit = async (word) => {
+    word.isEditting = false
+    const payload = {
+        wordId: word.id,
+        word: word.word,
+        jsonStr: JSON.stringify(word),
+        rawData: word,
+    }
+    const result = await apiCall(API_LIST.UPDATE_WORD(word.word), payload)
+    console.log('결과 -> ', result)
+}
+
+const deleteWord = async (word) => {
+    const parameters = {
+        wordId: word.id
+    }
+    const result = await apiCall(API_LIST.DELETE_WORD(word.word), parameters)
+    console.log('호출 결과 -> ', result);
+}
+
 </script>
 
 <template>
     <div>
         <div class="q-pa-md" style="max-width: 500px">
-            <div v-for="(word, wordIdx) in wordList" :key="wordIdx">
+            <div v-for="word in wordList" :key="word.id">
                 <div class="q-mt-md">
                     <span class="text-h4">{{ word.word }}</span>
                     <span class="text-h6">( {{ word.phonetic }} )</span>
-                    <q-btn>수정하기</q-btn>
-                    <q-btn>삭제하기</q-btn>
+
+                    <q-btn v-if="word.isEditting" @click="completeEdit(word)">편집완료</q-btn>
+                    <q-btn v-else @click="editWord(word)">수정하기</q-btn>
+                    <q-btn @click="deleteWord(word)">삭제하기</q-btn>
                 </div>
                 <q-card>
                     <q-tabs v-model="word.activeTab" dense class="text-grey" active-color="primary"
@@ -38,29 +67,22 @@ onMounted(async () => {
                         </template>
                     </q-tabs>
 
-                    <q-tab-panels v-model="word.activeTab" animated>
+                    <WordEditting v-if="word.isEditting" :wordDetail="word" />
+                    <q-tab-panels v-else v-model="word.activeTab" animated>
                         <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
                             <div class="q-mt-xl" v-for="(item, index) in meaning.definitions" :key="index">
                                 <span>뜻{{ index + 1 }}.</span>
-                                <!-- <q-btn @click="removeDefinition(meaning, index)" flat style="color: #FF0080"
-                                    label="삭제" /> -->
-                                <!-- <q-input v-model="item.definition" :dense="true" autogrow /> -->
                                 <span>{{ item.definition }}</span>
-
-                                <div>예문</div>
-                                <!-- <q-input v-if="item.example" v-model="item.example" :dense="true" autogrow />
+                                <div>Examples</div>
+                                <ul>
+                                    <li>ex - {{ item.example }}</li>
+                                </ul>
                                 <template v-for="(el, elIdx) in item.userExamples" :key="elIdx">
-                                    <q-input v-model="item.userExamples[elIdx]" :dense="true" autogrow />
-                                    <q-btn @click="removeUserExample(item, elIdx)">X</q-btn>
-                                </template> -->
-                                <template v-for="(el, elIdx) in item.examples" :key="elIdx">
                                     <ul>
-                                        <li>예문{{ elIdx + 1 }}. {{ el.example }}</li>
+                                        <li>ex{{ elIdx + 1 }} - {{ el }}</li>
                                     </ul>
                                 </template>
-
                                 <br>
-                                <!-- <q-btn @click="addUserExample(item)">예문 추가</q-btn> -->
                             </div>
                         </q-tab-panel>
                     </q-tab-panels>

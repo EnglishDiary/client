@@ -25,7 +25,17 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_URL}/word/list`,
         desc: '유저 단어 목록 조회'
-    }
+    },
+    DELETE_WORD: (word) => ({
+        method: DELETE,
+        path: `${API_SERVER_URL}/word/delete/${word}`,
+        desc: '유저 단어 삭제'
+    }),
+    UPDATE_WORD: (word) => ({
+        method: POST,
+        path: `${API_SERVER_URL}/word/update/${word}`,
+        desc: '유저 단어 수정'
+    }),
 
 }
 
