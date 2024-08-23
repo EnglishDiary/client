@@ -12,6 +12,7 @@ const activeTab = ref(0)
 const findWord = async () => {
     const result = await apiCall(API_LIST.FIND_WORD(word.value))
     if (result.status) {
+        activeTab.value = 0
         wordDetails.value = result.data[0]
     }
 }
