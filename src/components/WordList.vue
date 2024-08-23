@@ -7,10 +7,15 @@ import { apiCall } from '@/utils/apiCall'
 
 const wordList = ref([])
 const audio = ref(new Audio())
+const categories = ref([])
 
 onMounted(async () => {
-    const result = await apiCall(API_LIST.GET_USER_WORDS)
-    const jsonData = JSON.parse(result.data).list
+
+    const categoryRes = await apiCall(API_LIST.GET_USER_CATEGORIES)
+    categories.value = categoryRes.data
+
+    const wordRes = await apiCall(API_LIST.GET_USER_WORDS)
+    const jsonData = JSON.parse(wordRes.data).list
 
     jsonData.forEach(word => {
         word.activeTab = 0
@@ -45,9 +50,34 @@ const deleteWord = async (word) => {
     console.log('호출 결과 -> ', result);
 }
 
+const getWordsByCategory = async (categoryId) => {
+    console.log('카테고리 id -> ', categoryId)
+    const response = await apiCall(API_LIST.GET_USER_WORDS_BY_CATEGORY(categoryId))
+    console.log('response -> ', response)
+    const jsonData = JSON.parse(response.data).list
+
+    jsonData.forEach(word => {
+        word.activeTab = 0
+        word.isEditting = false
+    })
+
+    console.log('유저 단어 조회 결과 -> ', jsonData)
+    wordList.value = jsonData
+
+}
+
 </script>
 
 <template>
+    <div>
+        <q-btn @click="getWordsByCategory(0)">
+            all
+        </q-btn>
+        <q-btn @click="getWordsByCategory(category.id)" v-for="category in categories" :key="category.id">
+            {{ category.name }}
+        </q-btn>
+    </div>
+
     <div>
         <div class="q-pa-md" style="max-width: 500px">
             <div v-for="word in wordList" :key="word.id">
