@@ -26,6 +26,11 @@ const API_LIST = {
         path: `${API_SERVER_URL}/word/list`,
         desc: '유저 단어 목록 조회'
     },
+    GET_USER_WORDS_BY_CATEGORY: (categoryId) => ({
+        method: GET,
+        path: `${API_SERVER_URL}/word/${categoryId}/list`,
+        desc: '카테고리별 유저 단어 목록 조회'
+    }),
     DELETE_WORD: (word) => ({
         method: DELETE,
         path: `${API_SERVER_URL}/word/delete/${word}`,
@@ -36,6 +41,11 @@ const API_LIST = {
         path: `${API_SERVER_URL}/word/update/${word}`,
         desc: '유저 단어 수정'
     }),
+    GET_USER_CATEGORIES: {
+        method: GET,
+        path: `${API_SERVER_URL}/word/category`,
+        desc: '유저 단어장 카테고리 조회'
+    }
 
 }
 
