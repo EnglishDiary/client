@@ -8,6 +8,8 @@ const word = ref('')
 const wordDetails = ref({})
 const audio = ref(new Audio())
 const activeTab = ref(0)
+const categories = ref([])
+const selectedCategory = ref(null)
 
 const findWord = async () => {
     const result = await apiCall(API_LIST.FIND_WORD(word.value))
@@ -56,14 +58,20 @@ const checkWordDetails = () => {
 }
 
 const addNewWord = async () => {
-    console.log('워디 -> ', wordDetails.value)
-
     const payload = {
-        jsonData: JSON.stringify(wordDetails.value)
+        jsonData: JSON.stringify(wordDetails.value),
+        categoryId: selectedCategory.value?.id
     }
     const result = await apiCall(API_LIST.SAVE_WORD(wordDetails.value.word), payload)
     console.log('api 호출 결과 -> ', result)
 }
+
+onMounted(async () => {
+    const response = await apiCall(API_LIST.GET_USER_CATEGORIES)
+    if (response.status) {
+        categories.value = response.data
+    }
+})
 
 </script>
 
@@ -85,6 +93,10 @@ const addNewWord = async () => {
                                 v-if="identifyCountry(phonetic.audio)" :label="identifyCountry(phonetic.audio)" />
                         </template>
                     </div>
+                    <div class="col">
+                        <q-select v-model="selectedCategory" :options="categories" option-value="id" option-label="name"
+                            label="단어장 선택" />
+                    </div>
                 </div>
             </div>
 
@@ -92,6 +104,8 @@ const addNewWord = async () => {
                 <q-card>
                     <q-tabs v-model="activeTab" dense class="text-grey" active-color="primary" indicator-color="primary"
                         align="justify" narrow-indicator>
+                        <!-- TODO 240824 아래처럼 template 굳이 쓸 필요 없고 그냥 v-for를 q-tab안에다 넣으면 됨. 
+                         나머지 컴포넌트에서도 쓸 데 없이 반복문 적용할 때 template 태그 쓴 거 찾아서 리팩토링하기-->
                         <template v-for="(meaning, index) in wordDetails.meanings" :key="index">
                             <q-tab :name="index" :label="meaning.partOfSpeech" />
                         </template>
