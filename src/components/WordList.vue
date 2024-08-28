@@ -8,6 +8,7 @@ import { apiCall } from '@/utils/apiCall'
 const wordList = ref([])
 const audio = ref(new Audio())
 const categories = ref([])
+const currentCategoryId = ref(undefined)
 
 onMounted(async () => {
 
@@ -34,12 +35,17 @@ const completeEdit = async (word) => {
     word.isEditting = false
     const payload = {
         wordId: word.id,
+        categoryId: word.categoryId,
         word: word.word,
         jsonStr: JSON.stringify(word),
         rawData: word,
     }
     const result = await apiCall(API_LIST.UPDATE_WORD(word.word), payload)
     console.log('결과 -> ', result)
+    if (result.status && currentCategoryId.value !== word.categoryId) {
+        removeWordFromList(word)
+    }
+
 }
 
 const deleteWord = async (word) => {
@@ -48,10 +54,20 @@ const deleteWord = async (word) => {
     }
     const result = await apiCall(API_LIST.DELETE_WORD(word.word), parameters)
     console.log('호출 결과 -> ', result);
+    if (result.status) {
+        removeWordFromList(word)
+    }
+}
+
+const removeWordFromList = (targetWord) => {
+    wordList.value = wordList.value.filter((item) => {
+        return item.id !== targetWord.id
+    })
 }
 
 const getWordsByCategory = async (categoryId) => {
     console.log('카테고리 id -> ', categoryId)
+    currentCategoryId.value = categoryId
     const response = await apiCall(API_LIST.GET_USER_WORDS_BY_CATEGORY(categoryId))
     console.log('response -> ', response)
     const jsonData = JSON.parse(response.data).list
@@ -88,6 +104,7 @@ const getWordsByCategory = async (categoryId) => {
                     <q-btn v-if="word.isEditting" @click="completeEdit(word)">편집완료</q-btn>
                     <q-btn v-else @click="editWord(word)">수정하기</q-btn>
                     <q-btn @click="deleteWord(word)">삭제하기</q-btn>
+
                 </div>
                 <q-card>
                     <q-tabs v-model="word.activeTab" dense class="text-grey" active-color="primary"
@@ -97,7 +114,7 @@ const getWordsByCategory = async (categoryId) => {
                         </template>
                     </q-tabs>
 
-                    <WordEditting v-if="word.isEditting" :wordDetail="word" />
+                    <WordEditting v-if="word.isEditting" :wordDetail="word" :categories="categories" />
                     <q-tab-panels v-else v-model="word.activeTab" animated>
                         <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
                             <div class="q-mt-xl" v-for="(item, index) in meaning.definitions" :key="index">
