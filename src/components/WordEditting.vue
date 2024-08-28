@@ -1,20 +1,40 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const props = defineProps({
     wordDetail: {
         type: Object,
         required: true
+    },
+    categories: {
+        type: Array,
+        required: true
     }
 })
 
-import { ref, onMounted } from 'vue'
+const selectedCategory = ref(null)
 
 onMounted(() => {
     console.log('자식 컴포넌트 마운트 -> ', props.wordDetail)
+    const categoryId = props.wordDetail.categoryId
+    const originalCategory = props.categories.find((item) => {
+        return item.id === categoryId
+    })
+
+    selectedCategory.value = originalCategory
 })
+
+const handleCategoryChange = () => {
+    console.log('선택된 카테 -> ', selectedCategory.value)
+    props.wordDetail.categoryId = selectedCategory.value.id
+}
+
 
 </script>
 
 <template>
+    <q-select v-model="selectedCategory" :options="categories" label="카테고리" option-value="id" option-label="name"
+        @update:model-value="handleCategoryChange"></q-select>
     <q-tab-panels v-model="wordDetail.activeTab" animated>
         <q-tab-panel v-for="(meaning, index) in wordDetail.meanings" :key="index" :name="index">
             <div class="q-mt-xl" v-for="(item, index) in meaning.definitions" :key="index">
