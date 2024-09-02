@@ -42,8 +42,10 @@ const completeEdit = async (word) => {
     }
     const result = await apiCall(API_LIST.UPDATE_WORD(word.word), payload)
     console.log('결과 -> ', result)
-    if (result.status && currentCategoryId.value !== word.categoryId) {
-        removeWordFromList(word)
+    if (result.status) {
+        if (currentCategoryId.value && currentCategoryId.value !== word.categoryId) {
+            removeWordFromList(word)
+        }
     }
 
 }
@@ -82,6 +84,22 @@ const getWordsByCategory = async (categoryId) => {
 
 }
 
+const identifyCountry = (audioUrl) => {
+    if (audioUrl.includes('uk.mp3')) {
+        return 'uk'
+    } else if (audioUrl.includes('us.mp3')) {
+        return 'us'
+    } else {
+        return ''
+    }
+}
+
+const playAudio = (url) => {
+    audio.value.src = url
+    audio.value.play()
+}
+
+
 </script>
 
 <template>
@@ -106,6 +124,12 @@ const getWordsByCategory = async (categoryId) => {
                     <q-btn @click="deleteWord(word)">삭제하기</q-btn>
 
                 </div>
+                <!-- TODO 240831 WordSearchResult에도 중복된 거 있는데 따로 컴포넌트로 분리시키기 -->
+                <template v-for="phonetic in word.phonetics" :key="phonetic.audio">
+                    <q-btn @click="playAudio(phonetic.audio)" color="primary" v-if="identifyCountry(phonetic.audio)"
+                        :label="identifyCountry(phonetic.audio)" />
+                </template>
+
                 <q-card>
                     <q-tabs v-model="word.activeTab" dense class="text-grey" active-color="primary"
                         indicator-color="primary" align="justify" narrow-indicator>
