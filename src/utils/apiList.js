@@ -45,6 +45,21 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_URL}/word/category`,
         desc: '유저 단어장 카테고리 조회'
+    },
+    REQUEST_AI_CORRECTION: {
+        method: POST,
+        path: `${API_SERVER_URL}/diary/ai-correction`,
+        desc: '영어일기 AI 첨삭 요청'
+    },
+    GET_OFFICIAL_DIARY_CATEGORIES: {
+        method: GET,
+        path: `${API_SERVER_URL}/diary/category/official`,
+        desc: '다이어리 공식 카테고리 조회'
+    },
+    PUBLISH_DIARY: {
+        method: POST,
+        path: `${API_SERVER_URL}/diary/save`,
+        desc: '영어일기 발행'
     }
 
 }
