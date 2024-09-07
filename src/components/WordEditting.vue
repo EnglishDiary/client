@@ -14,6 +14,11 @@ const props = defineProps({
 
 const selectedCategory = ref(null)
 
+const handleCategoryChange = () => {
+    console.log('선택된 카테 -> ', selectedCategory.value)
+    props.wordDetail.categoryId = selectedCategory.value.id
+}
+
 onMounted(() => {
     console.log('자식 컴포넌트 마운트 -> ', props.wordDetail)
     const categoryId = props.wordDetail.categoryId
@@ -23,11 +28,6 @@ onMounted(() => {
 
     selectedCategory.value = originalCategory
 })
-
-const handleCategoryChange = () => {
-    console.log('선택된 카테 -> ', selectedCategory.value)
-    props.wordDetail.categoryId = selectedCategory.value.id
-}
 
 
 </script>
