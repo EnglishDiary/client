@@ -11,12 +11,12 @@ const categories = ref([])
 const currentCategoryId = ref(undefined)
 
 onMounted(async () => {
-
+    // TODO 240908 apiCall 2번 fetch 메소드 2개로 분리해서 await 없이 호출하기
     const categoryRes = await apiCall(API_LIST.GET_USER_CATEGORIES)
     categories.value = categoryRes.data
 
     const wordRes = await apiCall(API_LIST.GET_USER_WORDS)
-    const jsonData = JSON.parse(wordRes.data).list
+    const jsonData = JSON.parse(wordRes.data.jsonString).list
 
     jsonData.forEach(word => {
         word.activeTab = 0
@@ -71,16 +71,17 @@ const getWordsByCategory = async (categoryId) => {
     console.log('카테고리 id -> ', categoryId)
     currentCategoryId.value = categoryId
     const response = await apiCall(API_LIST.GET_USER_WORDS_BY_CATEGORY(categoryId))
-    console.log('response -> ', response)
-    const jsonData = JSON.parse(response.data).list
+    if (response.status) {
+        const jsonData = JSON.parse(response.data.jsonString).list
 
-    jsonData.forEach(word => {
-        word.activeTab = 0
-        word.isEditting = false
-    })
+        jsonData.forEach(word => {
+            word.activeTab = 0
+            word.isEditting = false
+        })
 
-    console.log('유저 단어 조회 결과 -> ', jsonData)
-    wordList.value = jsonData
+        console.log('유저 단어 조회 결과 -> ', jsonData)
+        wordList.value = jsonData
+    }
 
 }
 
