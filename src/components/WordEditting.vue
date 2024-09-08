@@ -15,8 +15,26 @@ const props = defineProps({
 const selectedCategory = ref(null)
 
 const handleCategoryChange = () => {
-    console.log('선택된 카테 -> ', selectedCategory.value)
     props.wordDetail.categoryId = selectedCategory.value.id
+}
+
+const addUserExample = (definition) => {
+    console.log('데피니 -> ', definition)
+    // userExamples.value.push('')
+
+    if (!definition.userExamples) {
+        definition.userExamples = []
+    }
+
+    definition.userExamples.push('')
+}
+
+const removeUserExample = (definition, index) => {
+    definition.userExamples.splice(index, 1)
+}
+
+const removeDefinition = (meaning, index) => {
+    meaning.definitions.splice(index, 1)
 }
 
 onMounted(() => {
