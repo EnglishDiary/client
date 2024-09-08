@@ -1,11 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-// reactive state
 const userId = ref('');
 const password = ref('');
 
-// lifecycle hooks
 onMounted(() => {
     console.log(`마운티드`)
 })

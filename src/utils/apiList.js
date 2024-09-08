@@ -11,6 +11,11 @@ const API_LIST = {
         path: `${API_SERVER_URL}/word/test`,
         desc: '테스트용'
     },
+    SIGNUP: {
+        method: POST,
+        path: `${API_SERVER_URL}/signup`,
+        desc: '회원가입'
+    },
     FIND_WORD: (word) => ({
         method: GET,
         path: `${API_SERVER_URL}/word/${word}`,

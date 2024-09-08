@@ -1,4 +1,5 @@
 <!-- TOOD 240906 quasar 에디터 쓰지 말기(카피앤페이스트 불완전함) -->
+<!-- TODO 240908 AI 첨삭 데이터를 2번 이상 요청할 수 있는데, 기존 것도 볼 수 있도록 리스트화 시키기-->
 <script setup>
 import { apiCall } from '@/utils/apiCall';
 import { API_LIST } from '@/utils/apiList';
@@ -89,9 +90,9 @@ onMounted(async () => {
                     <q-card class="full-height">
                         <q-card-section>
                             <q-editor v-model="editor" min-height="250px" :toolbar="[
-                    ['bold', 'italic', 'underline'],
-                    ['undo', 'redo'],
-                ]" class="full-height" />
+                                ['bold', 'italic', 'underline'],
+                                ['undo', 'redo'],
+                            ]" class="full-height" />
                         </q-card-section>
                     </q-card>
                 </div>
