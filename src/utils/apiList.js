@@ -60,7 +60,17 @@ const API_LIST = {
         method: POST,
         path: `${API_SERVER_URL}/diary/save`,
         desc: '영어일기 발행'
-    }
+    },
+    GET_DIARIES_BY_OFFICIAL_CATEGORY: (officialCategoryId) => ({
+        method: GET,
+        path: `${API_SERVER_URL}/diary/official-category/${officialCategoryId}/list`,
+        desc: '유저 다이어리 리스트 조회'
+    }),
+    FETCH_DIARY_DETAIL: (diaryId) => ({
+        method: GET,
+        path: `${API_SERVER_URL}/diary/${diaryId}/detail`,
+        desc: '유저 다아어리 상세 조회 '
+    })
 
 }
 
