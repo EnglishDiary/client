@@ -4,6 +4,9 @@
 import { apiCall } from '@/utils/apiCall';
 import { API_LIST } from '@/utils/apiList';
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const editor = ref('')
 const revisedVersion = ref('')
@@ -29,6 +32,11 @@ const publishDiary = async () => {
     console.log('발행 설정:', publishSettings.value)
     const { isPublic, categoryId, showRevisedDiary, showFeedback } = publishSettings.value
 
+    if (diaryTitle.value === '') {
+        alert('다이어리 제목을 입력해주세요')
+        return
+    }
+
     const parameters = {
         title: diaryTitle.value,
         content: editor.value,
@@ -41,7 +49,8 @@ const publishDiary = async () => {
     }
     const response = await apiCall(API_LIST.PUBLISH_DIARY, parameters)
     if (response.status) {
-        console.log('응답이요 -> ', response)
+        alert(response.message)
+        router.push(`/diary/official-category/list`)
     }
 }
 
@@ -142,7 +151,7 @@ onMounted(async () => {
 
                 <q-card-section class="q-pt-none">
                     <q-radio v-model="publishSettings.isPublic" :val=true label="공개" />
-                    <q-radio v-model="publishSettings.isPublic" :val=false label="비공개" />
+                    <!-- <q-radio v-model="publishSettings.isPublic" :val=false label="비공개" /> -->
 
                     <q-select v-model="selectedCategory" :options="categoryOptions" label="카테고리"
                         @update:model-value="handleCategoryChange" option-value="id" option-label="name"
