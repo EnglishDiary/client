@@ -1,3 +1,74 @@
+<script setup>
+import { ref } from 'vue'
+import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/auth'
+import { mdiBookPlus, mdiBookOpenVariant, mdiPencil, mdiBookAccount, mdiAccountGroup } from '@quasar/extras/mdi-v5'
+import squirrel from '@/assets/img/squirrel.png'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const leftDrawerOpen = ref(false)
+const search = ref('')
+const showAdvanced = ref(false)
+const showDateOptions = ref(false)
+const exactPhrase = ref('')
+const hasWords = ref('')
+const excludeWords = ref('')
+const byWebsite = ref('')
+const byDate = ref('Any time')
+
+const links1 = [
+    { icon: mdiBookPlus, text: '단어 등록', url: '/word' },
+    { icon: mdiBookOpenVariant, text: '나의 단어장', url: '/word/list/mine' },
+]
+
+const links2 = [
+    { icon: mdiPencil, text: '다이어리 쓰기', url: '/diary/write' },
+    { icon: mdiBookAccount, text: '다이어리 보기', url: '/diary/official-category/list' },
+    // { icon: mdiAccountGroup, text: '타인 일기', url: '/diary/official-category/list' },
+]
+const links3 = [
+    { icon: '', text: 'Language & region' },
+    { icon: '', text: 'Settings' },
+]
+
+function onClear() {
+    exactPhrase.value = ''
+    hasWords.value = ''
+    excludeWords.value = ''
+    byWebsite.value = ''
+    byDate.value = 'Any time'
+}
+
+function changeDate(option) {
+    byDate.value = option
+    showDateOptions.value = false
+}
+
+function toggleLeftDrawer() {
+    leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function toPage(url) {
+    router.push(url)
+}
+
+function login() {
+    router.push('/login')
+}
+
+function logout() {
+    authStore.logout()
+    router.push('/')
+}
+
+function toMyPage() {
+    router.push('/user/manage/category')
+}
+</script>
+
 <template>
     <q-layout view="hHh lpR fFf" class="bg-grey-1">
         <q-header elevated class="bg-white text-grey-8" height-hint="64">
@@ -5,19 +76,19 @@
                 <q-btn flat dense round @click="toggleLeftDrawer" aria-label="Menu" icon="menu" class="q-mr-sm" />
 
                 <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
-                    <img src="https://cdn.quasar.dev/img/layout-gallery/logo-google.svg">
-                    <span class="q-ml-sm">News</span>
+                    <img :src="squirrel" width="70px">
+                    <span class="q-ml-sm">Dobi's Garden</span>
                 </q-toolbar-title>
 
                 <q-space />
 
-                <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-grey-7 shadow-1"
+                <!-- <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-grey-7 shadow-1"
                     placeholder="Search for topics, locations & sources">
                     <template v-slot:prepend>
                         <q-icon v-if="search === ''" name="search" />
                         <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
                     </template>
-                    <template v-slot:append>
+<template v-slot:append>
                         <q-btn flat dense round aria-label="Menu" icon="arrow_drop_down">
                             <q-menu anchor="bottom end" self="top end">
                                 <div class="q-pa-md" style="width: 400px">
@@ -65,12 +136,12 @@
                             </q-menu>
                         </q-btn>
                     </template>
-                </q-input>
+</q-input> -->
 
                 <q-space />
 
                 <div class="q-gutter-sm row items-center no-wrap">
-                    <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
+                    <!-- <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
                         <q-tooltip>Google Apps</q-tooltip>
                     </q-btn>
                     <q-btn round dense flat color="grey-8" icon="notifications">
@@ -78,22 +149,30 @@
                             2
                         </q-badge>
                         <q-tooltip>Notifications</q-tooltip>
-                    </q-btn>
-                    <q-btn round flat>
+                    </q-btn> -->
+                    <!-- <q-btn round flat>
                         <q-avatar size="26px">
                             <img src="https://cdn.quasar.dev/img/boy-avatar.png">
                         </q-avatar>
                         <q-tooltip>Account</q-tooltip>
-                    </q-btn>
+                    </q-btn> -->
+                    <template v-if="authStore.isLoggedIn">
+                        <q-btn @click="toMyPage">내정보</q-btn>
+                        <q-btn @click="logout">로그아웃</q-btn>
+                    </template>
+                    <template v-else>
+                        <q-btn @click="login">로그인</q-btn>
+                    </template>
+
                 </div>
             </q-toolbar>
         </q-header>
 
-        <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-white" :width="280">
+        <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-white" :width="200">
             <q-scroll-area class="fit">
                 <q-list padding class="text-grey-8">
                     <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text"
-                        @click="changeContent" clickable>
+                        @click="toPage(link.url)" clickable>
                         <q-item-section avatar>
                             <q-icon :name="link.icon" />
                         </q-item-section>
@@ -104,7 +183,8 @@
 
                     <q-separator inset class="q-my-sm" />
 
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text"
+                        @click="toPage(link.url)" clickable>
                         <q-item-section avatar>
                             <q-icon :name="link.icon" />
                         </q-item-section>
@@ -129,7 +209,7 @@
                             <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">Terms</a>
                             <span> · </span>
                             <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">About
-                                Google</a>
+                                Dobi's garden</a>
                         </div>
                     </div>
                 </q-list>
@@ -142,77 +222,6 @@
     </q-layout>
 </template>
 
-<script>
-import { ref } from 'vue'
-import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
-
-export default {
-    name: 'GoogleNewsLayout',
-
-    setup() {
-        const leftDrawerOpen = ref(false)
-        const search = ref('')
-        const showAdvanced = ref(false)
-        const showDateOptions = ref(false)
-        const exactPhrase = ref('')
-        const hasWords = ref('')
-        const excludeWords = ref('')
-        const byWebsite = ref('')
-        const byDate = ref('Any time')
-
-        function onClear() {
-            exactPhrase.value = ''
-            hasWords.value = ''
-            excludeWords.value = ''
-            byWebsite.value = ''
-            byDate.value = 'Any time'
-        }
-
-        function changeDate(option) {
-            byDate.value = option
-            showDateOptions.value = false
-        }
-
-        function toggleLeftDrawer() {
-            leftDrawerOpen.value = !leftDrawerOpen.value
-        }
-
-        function changeContent() {
-            console.log('체컨');
-        }
-
-        return {
-            leftDrawerOpen,
-            search,
-            showAdvanced,
-            showDateOptions,
-            exactPhrase,
-            hasWords,
-            excludeWords,
-            byWebsite,
-            byDate,
-
-            links1: [
-                { icon: 'web', text: 'Top stories' },
-                { icon: 'person', text: 'For you' },
-            ],
-            links2: [
-                { icon: 'flag', text: 'Canada' },
-                { icon: fasEarthAmericas, text: 'World' },
-            ],
-            links3: [
-                { icon: '', text: 'Language & region' },
-                { icon: '', text: 'Settings' },
-            ],
-
-            onClear,
-            changeDate,
-            toggleLeftDrawer,
-            changeContent
-        }
-    }
-}
-</script>
 
 <style lang="sass">
 .GNL
