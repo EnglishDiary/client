@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
-import { apiCall } from '@/utils/apiCall';
-import { API_LIST } from '@/utils/apiList';
+import { apiCall, apiCallWithFileUpload } from '@/utils/apiCall';
+import { API_LIST, OPEN_API_LIST } from '@/utils/apiList';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const userId = ref('')
 const nickname = ref('')
@@ -26,17 +29,34 @@ const passwordRules = [
     val => val.length <= 20 || '비밀번호는 20자 이하여야 합니다'
 ]
 
+const getRandomPokeImgUrl = async () => {
+    const randomId = Math.floor(Math.random() * 300) + 1
+
+    const openApiResult = await apiCall(OPEN_API_LIST.POKEMON(randomId));
+    if (openApiResult.id) {
+        return openApiResult.sprites.front_default;
+    }
+    return null;
+};
+
+
 const onSubmit = async () => {
+
+    const url = await getRandomPokeImgUrl();
+
     const parameters = {
-        userId: userId.value,
-        nickname: nickname.value,
+        email: userId.value,
+        name: nickname.value,
         password: password.value,
-        profileImage: profileImage.value
+        imageUrl: url
     }
     const response = await apiCall(API_LIST.SIGNUP, parameters)
-    if (response.status) {
+    if (response.statusCode === 'OK') {
+        router.push('/login')
+    } else {
         alert(response.message)
     }
+
 }
 </script>
 
@@ -58,11 +78,11 @@ const onSubmit = async () => {
 
                             <q-input v-model="password" label="비밀번호" type="password" :rules="passwordRules" />
 
-                            <q-file v-model="profileImage" label="프로필 이미지" accept="image/*">
+                            <!-- <q-file v-model="profileImage" label="프로필 이미지" accept="image/*">
                                 <template v-slot:prepend>
                                     <q-icon name="attach_file" />
                                 </template>
-                            </q-file>
+</q-file> -->
 
                             <div>
                                 <q-btn label="가입하기" type="submit" color="primary" />
