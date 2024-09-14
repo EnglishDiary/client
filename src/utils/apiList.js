@@ -11,10 +11,20 @@ const API_LIST = {
         path: `${API_SERVER_URL}/word/test`,
         desc: '테스트용'
     },
+    VERIFY_USER: {
+        method: GET,
+        path: `${API_SERVER_URL}/user/me`,
+        desc: '유저 인증'
+    },
     SIGNUP: {
         method: POST,
-        path: `${API_SERVER_URL}/signup`,
+        path: `${API_SERVER_URL}/auth/signup`,
         desc: '회원가입'
+    },
+    MEMBER_LOGIN: {
+        method: POST,
+        path: `${API_SERVER_URL}/auth/login`,
+        desc: '유저 로그인'
     },
     FIND_WORD: (word) => ({
         method: GET,
@@ -75,8 +85,21 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_URL}/diary/${diaryId}/detail`,
         desc: '유저 다아어리 상세 조회 '
-    })
-
+    }),
+    UPDATE_USER_WORD_CATEGORY: {
+        method: POST,
+        path: `${API_SERVER_URL}/user/word/category/update`,
+        desc: '유저 단어장 카테고리 업데이트'
+    }
 }
 
-export { API_LIST };
+const OPEN_API_LIST = {
+    POKEMON: (id) => ({
+        method: GET,
+        path: `https://pokeapi.co/api/v2/pokemon/${id}`,
+        desc: '랜덤 포켓몬 사진 조회'
+    }),
+}
+
+
+export { API_LIST, OPEN_API_LIST };
