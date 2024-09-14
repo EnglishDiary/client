@@ -8,6 +8,7 @@ import WriteDiaryView from '@/views/WriteDiaryView.vue'
 import DiaryListView from '@/views/DiaryListView.vue'
 import DiaryDetailView from '@/views/DiaryDetailView.vue'
 import SignupView from '@/views/SignupView.vue'
+import CategoryManageView from '@/views/CategoryManageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +26,7 @@ const router = createRouter({
     {
       path: '/',
       component: Layout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -55,6 +57,11 @@ const router = createRouter({
           path: 'diary/:id/detail',
           name: 'DiaryDetail',
           component: DiaryDetailView
+        },
+        {
+          path: 'user/manage/category',
+          name: 'CategoryManage',
+          component: CategoryManageView
         }
       ]
     }
