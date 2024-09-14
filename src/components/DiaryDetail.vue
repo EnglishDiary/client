@@ -51,7 +51,7 @@ onMounted(() => {
                 <div class="col-12 col-md-6">
                     <q-card class="full-height" v-if="detail.aiRevisedDiary">
                         <q-card-section>
-                            <div class="text-h6">원본</div>
+                            <div class="text-h6">AI 첨삭</div>
                             <q-separator class="q-my-sm" />
                             <div class="q-pa-sm" style="min-height: 250px;">
                                 <div v-html="detail.aiRevisedDiary"></div>
