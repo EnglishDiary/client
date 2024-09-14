@@ -1,9 +1,105 @@
+<template>
+
+    <div>
+        <q-btn @click="getWordsByCategory(0)">
+            all
+        </q-btn>
+        <q-btn @click="getWordsByCategory(category.id)" v-for="category in categories" :key="category.id">
+            {{ category.name }}
+        </q-btn>
+    </div>
+
+    <div class="q-pa-md">
+        <div v-for="word in wordList" :key="word.id" class="q-mb-md">
+            <q-card class="my-card">
+                <q-card-section>
+                    <div class="row items-center justify-between">
+                        <div>
+                            <span class="text-h5">{{ word.word }}</span>
+                            <span class="text-subtitle1 q-ml-sm">( {{ word.phonetic }} )</span>
+                        </div>
+                        <div>
+                            <q-btn v-if="word.isEditting" @click="completeEdit(word)" color="positive" label="편집완료" />
+                            <q-btn v-else @click="editWord(word)" color="primary" label="수정하기" />
+                            <q-btn @click="deleteWord(word)" color="negative" label="삭제하기" class="q-ml-sm" />
+                        </div>
+                    </div>
+                </q-card-section>
+
+                <q-card-section>
+                    <div class="row q-gutter-sm">
+                        <q-btn v-for="phonetic in word.phonetics" :key="phonetic.audio"
+                            @click="playAudio(phonetic.audio)" color="secondary"
+                            :label="identifyCountry(phonetic.audio)" icon="volume_up" />
+                    </div>
+                </q-card-section>
+
+                <q-card-section>
+                    <WordEditting v-if="word.isEditting" :wordDetail="word" :categories="categories" />
+                    <template v-else>
+                        <q-tabs v-model="word.activeTab" dense class="text-primary" active-color="primary"
+                            indicator-color="primary" align="justify" narrow-indicator>
+                            <q-tab v-for="(meaning, index) in word.meanings" :key="index" :name="index"
+                                :label="meaning.partOfSpeech" />
+                        </q-tabs>
+
+                        <q-separator />
+
+                        <q-tab-panels v-model="word.activeTab" animated>
+                            <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
+                                <div v-for="(item, defIndex) in meaning.definitions" :key="defIndex" class="q-mb-md">
+                                    <div class="text-subtitle1 q-mb-xs">Definition {{ defIndex + 1 }}</div>
+                                    <div class="q-ml-sm">{{ item.definition }}</div>
+
+                                    <div v-if="item.example || item.userExamples.length > 0" class="q-mt-sm">
+                                        <div class="text-weight-bold">Examples:</div>
+                                        <q-list dense>
+                                            <q-item v-if="item.example">
+                                                <q-item-section avatar>
+                                                    <q-icon name="book" color="primary" />
+                                                </q-item-section>
+                                                <q-item-section>{{ item.example }}</q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(ex, exIndex) in item.userExamples" :key="exIndex">
+                                                <q-item-section avatar>
+                                                    <q-icon name="person" color="secondary" />
+                                                </q-item-section>
+                                                <q-item-section>{{ ex }}</q-item-section>
+                                            </q-item>
+                                        </q-list>
+                                    </div>
+                                </div>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </template>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div v-if="wordList.length == 0">
+            <q-page class="q-pa-md">
+                <q-card class="text-center q-pa-lg">
+                    <q-icon :name="mdiBookOutline" size="64px" color="grey-7" />
+                    <div class="text-h6 q-mt-md">저장된 단어가 없습니다</div>
+                    <div class="text-subtitle1 q-mt-sm">단어장을 채워보세요!</div>
+                    <div class="q-mt-md">
+                        <q-btn color="primary" @click="toPage('/word')">단어 찾아보기</q-btn>
+                    </div>
+                </q-card>
+            </q-page>
+        </div>
+    </div>
+</template>
+
 <script setup>
 import WordEditting from './WordEditting.vue'
-
 import { ref, onMounted } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
+import { mdiBookOutline } from '@quasar/extras/mdi-v5'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const wordList = ref([])
 const audio = ref(new Audio())
@@ -11,7 +107,6 @@ const categories = ref([])
 const currentCategoryId = ref(undefined)
 
 onMounted(async () => {
-    // TODO 240908 apiCall 2번 fetch 메소드 2개로 분리해서 await 없이 호출하기
     const categoryRes = await apiCall(API_LIST.GET_USER_CATEGORIES)
     categories.value = categoryRes.data
 
@@ -47,7 +142,6 @@ const completeEdit = async (word) => {
             removeWordFromList(word)
         }
     }
-
 }
 
 const deleteWord = async (word) => {
@@ -82,14 +176,13 @@ const getWordsByCategory = async (categoryId) => {
         console.log('유저 단어 조회 결과 -> ', jsonData)
         wordList.value = jsonData
     }
-
 }
 
 const identifyCountry = (audioUrl) => {
     if (audioUrl.includes('uk.mp3')) {
-        return 'uk'
+        return 'UK'
     } else if (audioUrl.includes('us.mp3')) {
-        return 'us'
+        return 'US'
     } else {
         return ''
     }
@@ -100,68 +193,21 @@ const playAudio = (url) => {
     audio.value.play()
 }
 
-
+const toPage = (url) => {
+    router.push(url)
+}
 </script>
 
-<template>
-    <div>
-        <q-btn @click="getWordsByCategory(0)">
-            all
-        </q-btn>
-        <q-btn @click="getWordsByCategory(category.id)" v-for="category in categories" :key="category.id">
-            {{ category.name }}
-        </q-btn>
-    </div>
+<style scoped>
+.my-card {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
 
-    <div>
-        <div class="q-pa-md" style="max-width: 500px">
-            <div v-for="word in wordList" :key="word.id">
-                <div class="q-mt-md">
-                    <span class="text-h4">{{ word.word }}</span>
-                    <span class="text-h6">( {{ word.phonetic }} )</span>
+.empty-card {
+    width: 100%;
+    max-width: 350px;
 
-                    <q-btn v-if="word.isEditting" @click="completeEdit(word)">편집완료</q-btn>
-                    <q-btn v-else @click="editWord(word)">수정하기</q-btn>
-                    <q-btn @click="deleteWord(word)">삭제하기</q-btn>
-
-                </div>
-                <!-- TODO 240831 WordSearchResult에도 중복된 거 있는데 따로 컴포넌트로 분리시키기 -->
-                <template v-for="phonetic in word.phonetics" :key="phonetic.audio">
-                    <q-btn @click="playAudio(phonetic.audio)" color="primary" v-if="identifyCountry(phonetic.audio)"
-                        :label="identifyCountry(phonetic.audio)" />
-                </template>
-
-                <q-card>
-                    <q-tabs v-model="word.activeTab" dense class="text-grey" active-color="primary"
-                        indicator-color="primary" align="justify" narrow-indicator>
-                        <template v-for="(meaning, index) in word.meanings" :key="index">
-                            <q-tab :name="index" :label="meaning.partOfSpeech" />
-                        </template>
-                    </q-tabs>
-
-                    <WordEditting v-if="word.isEditting" :wordDetail="word" :categories="categories" />
-                    <q-tab-panels v-else v-model="word.activeTab" animated>
-                        <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
-                            <div class="q-mt-xl" v-for="(item, index) in meaning.definitions" :key="index">
-                                <span>뜻{{ index + 1 }}.</span>
-                                <span>{{ item.definition }}</span>
-                                <div>Examples</div>
-                                <ul>
-                                    <li>ex - {{ item.example }}</li>
-                                </ul>
-                                <template v-for="(el, elIdx) in item.userExamples" :key="elIdx">
-                                    <ul>
-                                        <li>ex{{ elIdx + 1 }} - {{ el }}</li>
-                                    </ul>
-                                </template>
-                                <br>
-                            </div>
-                        </q-tab-panel>
-                    </q-tab-panels>
-
-                </q-card>
-            </div>
-
-        </div>
-    </div>
-</template>
+}
+</style>
