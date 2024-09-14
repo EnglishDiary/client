@@ -1,20 +1,10 @@
 <script setup>
-import { API_LIST } from '@/utils/apiList'
-import { apiCall } from '@/utils/apiCall'
-
-const testApi = async () => {
-    console.log('api list -> ', API_LIST);
-    const result = await apiCall(API_LIST.TEST_EP);
-    console.log('결과 -> ', result);
-
-
-}
+import mainpage from '@/assets/img/mainpage2.png'
 
 </script>
 
 <template>
-    <div>
-        메인뷰
+    <div class="row justify-center items-center" style="height: 90vh;">
+        <q-img :src="mainpage" style="max-width: 80%; max-height: 90vh;" />
     </div>
-    <button @click="testApi">버튼</button>
 </template>
