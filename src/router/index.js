@@ -10,9 +10,6 @@ import DiaryDetailView from '@/views/DiaryDetailView.vue'
 import SignupView from '@/views/SignupView.vue'
 import CategoryManageView from '@/views/CategoryManageView.vue'
 import { useAuthStore } from '@/store/auth'
-import { apiCall } from '@/utils/apiCall'
-import { API_LIST } from '@/utils/apiList'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,7 +49,10 @@ const router = createRouter({
         {
           path: 'diary/write',
           name: 'WrtingDiaryPage',
-          component: WriteDiaryView
+          component: WriteDiaryView,
+          meta: {
+            requiresAuth: true
+          }
         },
         {
           path: 'diary/official-category/list',
@@ -67,7 +67,11 @@ const router = createRouter({
         {
           path: 'user/manage/category',
           name: 'CategoryManage',
-          component: CategoryManageView
+          component: CategoryManageView,
+          meta: {
+            requiresAuth: true
+          }
+
         }
       ]
     }
@@ -78,20 +82,16 @@ router.beforeEach(async (to, from, next) => {
   const { requiresAuth } = to.meta
   const authStore = useAuthStore()
 
-  if (!authStore.user) {
-    await authStore.checkUser()
-  }
+  const isAuthenticated = await authStore.checkAuth()
 
   if (!requiresAuth) {
     return next()
   }
 
-  if (authStore.isLoggedIn) {
-    return next()
-  }
-  const isAuthenticated = await authStore.checkAuth()
   if (isAuthenticated) {
     return next()
+  } else {
+    return next('/login')
   }
 })
 

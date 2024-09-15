@@ -10,18 +10,10 @@ export const useAuthStore = defineStore('auth', {
     }),
     actions: {
         async checkAuth() {
-            const token = localStorage.getItem('access_token')
-            if (token) {
-                const response = await apiCall(API_LIST.VERIFY_USER)
-                if (response.status) {
-                    this.login(response.data)
-                    return true
-                }
-                return false
+            if (this.user) {
+                return true
             }
-            location.href = '/login'
-        },
-        async checkUser() {
+
             const token = localStorage.getItem('access_token')
             if (token) {
                 const response = await apiCall(API_LIST.VERIFY_USER)
@@ -31,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
                 }
             }
         },
-        login(userData, token) {
+        login(userData) {
             this.isLoggedIn = true
             this.user = userData
         },
