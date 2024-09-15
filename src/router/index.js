@@ -9,6 +9,10 @@ import DiaryListView from '@/views/DiaryListView.vue'
 import DiaryDetailView from '@/views/DiaryDetailView.vue'
 import SignupView from '@/views/SignupView.vue'
 import CategoryManageView from '@/views/CategoryManageView.vue'
+import { useAuthStore } from '@/store/auth'
+import { apiCall } from '@/utils/apiCall'
+import { API_LIST } from '@/utils/apiList'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +30,6 @@ const router = createRouter({
     {
       path: '/',
       component: Layout,
-      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -41,7 +44,10 @@ const router = createRouter({
         {
           path: 'word/list/mine',
           name: 'WordList',
-          component: WordListView
+          component: WordListView,
+          meta: {
+            requiresAuth: true
+          }
         },
         {
           path: 'diary/write',
@@ -66,6 +72,27 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  const { requiresAuth } = to.meta
+  const authStore = useAuthStore()
+
+  if (!authStore.user) {
+    await authStore.checkUser()
+  }
+
+  if (!requiresAuth) {
+    return next()
+  }
+
+  if (authStore.isLoggedIn) {
+    return next()
+  }
+  const isAuthenticated = await authStore.checkAuth()
+  if (isAuthenticated) {
+    return next()
+  }
 })
 
 export default router

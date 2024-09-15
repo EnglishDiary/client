@@ -13,20 +13,27 @@ export const useAuthStore = defineStore('auth', {
             const token = localStorage.getItem('access_token')
             if (token) {
                 const response = await apiCall(API_LIST.VERIFY_USER)
-
-                if (response.status === 401) {
-                    alert('checkAuth 인증 실패')
-                } else {
-                    console.log('유저미 응답 결과 -> ', response)
-                    this.isLoggedIn = true
-                    this.user = response.data
+                if (response.status) {
+                    this.login(response.data)
+                    return true
+                }
+                return false
+            }
+            location.href = '/login'
+        },
+        async checkUser() {
+            const token = localStorage.getItem('access_token')
+            if (token) {
+                const response = await apiCall(API_LIST.VERIFY_USER)
+                if (response.status) {
+                    this.login(response.data)
+                    return true
                 }
             }
         },
         login(userData, token) {
             this.isLoggedIn = true
             this.user = userData
-            localStorage.setItem('access_token', token)
         },
         logout() {
             this.isLoggedIn = false

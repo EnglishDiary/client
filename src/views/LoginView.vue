@@ -11,10 +11,6 @@ const authStore = useAuthStore()
 const userId = ref('');
 const password = ref('');
 
-onMounted(() => {
-    console.log(`마운티드`)
-})
-
 const login = async () => {
     const parameters = {
         email: userId.value,
@@ -22,13 +18,14 @@ const login = async () => {
     }
     const response = await apiCall(API_LIST.MEMBER_LOGIN, parameters)
 
-    if (response.accessToken) {
-        const { accessToken } = response
-        console.log('액세스 토큰 -> ', accessToken)
-
+    if (response.status) {
+        const { accessToken } = response.data
         localStorage.setItem('access_token', accessToken)
+
         await authStore.checkAuth()
-        router.push('/word/list/mine')
+        router.push('/')
+    } else {
+        alert(response.message)
     }
 
 }
