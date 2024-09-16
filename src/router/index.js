@@ -17,12 +17,27 @@ const router = createRouter({
     {
       path: '/login',
       name: 'Login',
-      component: LoginView
+      component: LoginView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.isLoggedIn) {
+          return next('/')
+        }
+        return next()
+      }
     },
     {
       path: '/signup',
       name: 'Signup',
       component: SignupView,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.isLoggedIn) {
+          return next('/')
+        }
+        return next()
+      }
+
     },
     {
       path: '/',
