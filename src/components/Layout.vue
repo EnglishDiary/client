@@ -20,13 +20,13 @@ const byWebsite = ref('')
 const byDate = ref('Any time')
 
 const links1 = [
-    { icon: mdiBookPlus, text: '단어 등록', url: '/word' },
+    { icon: mdiBookPlus, text: '영단어 등록', url: '/word' },
     { icon: mdiBookOpenVariant, text: '나의 단어장', url: '/word/list/mine' },
 ]
 
 const links2 = [
-    { icon: mdiPencil, text: '다이어리 쓰기', url: '/diary/write' },
-    { icon: mdiBookAccount, text: '다이어리 보기', url: '/diary/official-category/list' },
+    { icon: mdiPencil, text: '영어일기 쓰기', url: '/diary/write' },
+    { icon: mdiBookAccount, text: '영어일기 보기', url: '/diary/official-category/list' },
     // { icon: mdiAccountGroup, text: '타인 일기', url: '/diary/official-category/list' },
 ]
 const links3 = [
