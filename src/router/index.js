@@ -9,7 +9,9 @@ import DiaryListView from '@/views/DiaryListView.vue'
 import DiaryDetailView from '@/views/DiaryDetailView.vue'
 import SignupView from '@/views/SignupView.vue'
 import CategoryManageView from '@/views/CategoryManageView.vue'
+import NotFound from '@/components/NotFound.vue'
 import { useAuthStore } from '@/store/auth'
+import WriteExpressionView from '@/views/WriteExpressionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,10 +88,23 @@ const router = createRouter({
           meta: {
             requiresAuth: true
           }
-
+        },
+        {
+          path: 'expression',
+          name: 'WriteExpression',
+          component: WriteExpressionView,
         }
       ]
+    },
+    // 404 페이지를 위한 catch-all 라우트
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFound
     }
+
+
+
   ]
 })
 
