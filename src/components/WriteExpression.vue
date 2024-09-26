@@ -2,12 +2,12 @@
     <q-page padding>
         <q-card class="q-pa-md">
             <q-card-section>
-                <q-input v-model="koreanInput" label="영작하고 싶은 표현 혹은 문장 (한국어로 입력 | 예시: 그건 정말 하늘에 별 따기야)" filled
-                    type="textarea" :rules="[val => !!val || '필수 입력 항목입니다']" rows="3" autogrow />
+                <q-input v-model="koreanInput" label="영작하고 싶은 표현 혹은 문장 (한국어로 입력 | 예시: 식은 죽 먹기)" filled type="textarea"
+                    :rules="[val => !!val || '필수 입력 항목입니다']" rows="3" autogrow />
             </q-card-section>
             <q-card-section>
-                <q-input v-model="englishInput" label="당신의 영작 (영어로 입력, 선택사항)" filled type="textarea" rows="3"
-                    autogrow />
+                <q-input v-model="englishInput" label="선택입력 항목 - 당신의 영작 (영어로 입력 | 예시: peace of cake)" filled
+                    type="textarea" rows="3" autogrow />
             </q-card-section>
             <q-card-actions align="right">
                 <q-btn label="AI에게 물어보기" color="primary" @click="askAI" :loading="loading" />
