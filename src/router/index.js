@@ -12,6 +12,7 @@ import CategoryManageView from '@/views/CategoryManageView.vue'
 import NotFound from '@/components/NotFound.vue'
 import { useAuthStore } from '@/store/auth'
 import WriteExpressionView from '@/views/WriteExpressionView.vue'
+import ExpressionListView from '@/views/ExpressionListView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,7 +54,10 @@ const router = createRouter({
         {
           path: 'word',
           name: 'Word',
-          component: WordView
+          component: WordView,
+          meta: {
+            requiresAuth: true
+          }
         },
         {
           path: 'word/list/mine',
@@ -93,6 +97,14 @@ const router = createRouter({
           path: 'expression',
           name: 'WriteExpression',
           component: WriteExpressionView,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: 'expression/list',
+          name: 'ExpresionList',
+          component: ExpressionListView
         }
       ]
     },
@@ -102,8 +114,6 @@ const router = createRouter({
       name: 'NotFound',
       component: NotFound
     }
-
-
 
   ]
 })
