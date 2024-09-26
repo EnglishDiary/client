@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
-import { mdiBookPlus, mdiBookOpenVariant, mdiPencil, mdiBookAccount, mdiAccountGroup } from '@quasar/extras/mdi-v5'
+import { mdiBookPlus, mdiBookOpenVariant, mdiPencil, mdiBookAccount, mdiAccountGroup, mdiFormatLetterCase, mdiPaperclip } from '@quasar/extras/mdi-v5'
 import squirrel from '@/assets/img/squirrel.png'
 
 const router = useRouter()
@@ -29,7 +29,13 @@ const links2 = [
     { icon: mdiBookAccount, text: '영어일기 보기', url: '/diary/official-category/list' },
     // { icon: mdiAccountGroup, text: '타인 일기', url: '/diary/official-category/list' },
 ]
+
 const links3 = [
+    { icon: mdiFormatLetterCase, text: '짧은 영작', url: '/expression' },
+    { icon: mdiPaperclip, text: '표현 보기', url: '/expression/list' },
+]
+
+const links4 = [
     { icon: '', text: 'Language & region' },
     { icon: '', text: 'Settings' },
 ]
@@ -195,7 +201,19 @@ function toMyPage() {
 
                     <q-separator inset class="q-my-sm" />
 
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text" clickable>
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text"
+                        @click="toPage(link.url)" clickable>
+                        <q-item-section avatar>
+                            <q-icon :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-separator inset class="q-my-sm" />
+
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links4" :key="link.text" clickable>
                         <q-item-section>
                             <q-item-label>{{ link.text }} <q-icon v-if="link.icon" :name="link.icon" /></q-item-label>
                         </q-item-section>
