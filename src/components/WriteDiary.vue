@@ -12,8 +12,10 @@ const router = useRouter()
 const editor = ref('')
 const revisedVersion = ref('')
 const gptFeedback = ref('')
+const translation = ref('')
 const isLoading = ref(false)
 const showPublishModal = ref(false)
+const showTranslationModal = ref(false)
 const categoryOptions = ref([])
 const selectedCategory = ref(null)
 const diaryTitle = ref('')
@@ -27,6 +29,10 @@ const publishSettings = ref({
 
 const openPublishModal = () => {
     showPublishModal.value = true
+}
+
+const openTranslationModal = () => {
+    showTranslationModal.value = true
 }
 
 const publishDiary = async () => {
@@ -72,8 +78,10 @@ const requestAICorrection = async () => {
     isLoading.value = false
     if (response.status) {
         const { revisedDiary, feedback } = response.data
+        const korean = response.data.translation
         revisedVersion.value = revisedDiary
         gptFeedback.value = feedback
+        translation.value = korean
     }
 }
 
@@ -122,6 +130,7 @@ onMounted(async () => {
                             <div v-else class="text-grey-6 flex flex-center" style="min-height: 250px;">
                                 AI 첨삭 결과가 여기에 표시됩니다.
                             </div>
+                            <q-btn @click="openTranslationModal" v-if="revisedVersion">해석보기</q-btn>
                         </q-card-section>
                     </q-card>
                 </div>
@@ -172,12 +181,41 @@ onMounted(async () => {
             </q-card>
         </q-dialog>
 
+        <!-- 한국어 해석 모달 -->
+        <q-dialog v-model="showTranslationModal">
+            <q-card style="width: 900px; max-width: 90vw;">
+                <q-card-section class="row items-center q-pb-none">
+                    <div class="text-h6">원문과 번역</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                </q-card-section>
+
+                <q-card-section class="row q-col-gutter-md">
+                    <!-- Revised Diary -->
+                    <div class="col-6">
+                        <div class="text-subtitle2">첨삭된 일기</div>
+                        <q-separator class="q-my-sm" />
+                        <div v-html="revisedVersion" class="text-body2"></div>
+                    </div>
+                    <!-- Translation -->
+                    <div class="col-6">
+                        <div class="text-subtitle2">번역</div>
+                        <q-separator class="q-my-sm" />
+                        <div v-html="translation" class="text-body2 bg-additional"></div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
 
     </q-page>
 </template>
 
 <style scoped>
 .full-height {
-    height: 100%;
+    height: 100%
+}
+
+.bg-additional {
+    background-color: #fbfbeb
 }
 </style>

@@ -6,7 +6,7 @@
                     :rules="[val => !!val || '필수 입력 항목입니다']" rows="3" autogrow />
             </q-card-section>
             <q-card-section>
-                <q-input v-model="englishInput" label="선택입력 항목 - 당신의 영작 (영어로 입력 | 예시: peace of cake)" filled
+                <q-input v-model="englishInput" label="선택입력 항목 - 당신의 영작 (영어로 입력 | 예시: piece of cake)" filled
                     type="textarea" rows="3" autogrow />
             </q-card-section>
             <q-card-actions align="right">
