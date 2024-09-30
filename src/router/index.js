@@ -114,6 +114,9 @@ const router = createRouter({
       name: 'NotFound',
       component: NotFound
     }
+    // MEMO 240928 - 500에러 났을 때도 URL 리다이렉트 시키는 건 유저 편의성을 오히려 해칠 수도 있을 거 같음
+    // https://quasar.dev/quasar-cli-webpack/developing-ssr/handling-404-and-500-errors#error-404
+
 
   ]
 })
