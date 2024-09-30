@@ -22,29 +22,6 @@ const createFomrData = (parameters, file) => {
     return formData;
 }
 
-const createAxiosConfig = (apiSpec, headers, parameters, file) => {
-    const url = apiSpec.path;
-    const axiosConfig = {
-        method: apiSpec.method,
-        url,
-        headers,
-    };
-
-    if (file) {
-        axiosConfig.data = createFomrData(parameters, file);
-        return axiosConfig;
-    }
-
-    if (apiSpec.method.toUpperCase() === 'GET') {
-        axiosConfig.params = parameters;
-        return axiosConfig;
-    }
-
-    // POST, PATCH, DELETE, etc..
-    axiosConfig.data = parameters;
-    return axiosConfig;
-};
-
 const requestWithAxios = async (config) => {
     try {
         const response = await axios(config);
@@ -81,16 +58,34 @@ const apiCall = (apiSpec, parameters, customHeader) => {
         setUserToken(header);
     }
 
-    const config = createAxiosConfig(apiSpec, header, parameters);
+    const config = {
+        method: apiSpec.method,
+        url: apiSpec.path,
+        headers: header,
+    };
+
+    if (apiSpec.method.toUpperCase() === 'GET') {
+        config.params = parameters;
+    } else {    // POST, PATCH, DELETE, etc..
+        config.data = parameters;
+    }
 
     return requestWithAxios(config);
 };
 
 const apiCallWithFileUpload = (apiSpec, parameters, file, customHeader) => {
     const header = { ...formHeader, customHeader };
-    setUserToken(header);
+    if (!apiSpec.open) {
+        setUserToken(header);
+    }
 
-    const config = createAxiosConfig(apiSpec, header, parameters, file);
+    const config = {
+        method: apiSpec.method,
+        url: apiSpec.path,
+        headers: header,
+    };
+
+    config.data = createFomrData(parameters, file);
 
     return requestWithAxios(config);
 }
