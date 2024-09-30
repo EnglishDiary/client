@@ -2,12 +2,16 @@
 <!-- TODO 240908 AI 첨삭 데이터를 2번 이상 요청할 수 있는데, 기존 것도 볼 수 있도록 리스트화 시키기-->
 <!-- TODO 240915 AI 첨삭 요청 중일 때는 첨삭버튼 비활성화 -->
 <script setup>
-import { apiCall } from '@/utils/apiCall';
+import { apiCall, apiCallWithFileUpload } from '@/utils/apiCall';
 import { API_LIST } from '@/utils/apiList';
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar'
+
+const MAX_FILE_NUMBER = 1
 
 const router = useRouter()
+const $q = useQuasar()
 
 const editor = ref('')
 const revisedVersion = ref('')
@@ -19,6 +23,8 @@ const showTranslationModal = ref(false)
 const categoryOptions = ref([])
 const selectedCategory = ref(null)
 const diaryTitle = ref('')
+const isHorizontalLayout = ref(true)
+const selectedImage = ref(null)
 
 const publishSettings = ref({
     isPublic: true,
@@ -54,7 +60,8 @@ const publishDiary = async () => {
         isFeedbackPublic: showFeedback,
         officialCategoryId: categoryId,
     }
-    const response = await apiCall(API_LIST.PUBLISH_DIARY, parameters)
+
+    const response = await apiCallWithFileUpload(API_LIST.PUBLISH_DIARY, parameters, selectedImage.value)
     if (response.status) {
         alert(response.message)
         router.push(`/diary/official-category/list`)
@@ -63,6 +70,22 @@ const publishDiary = async () => {
 
 const handleCategoryChange = () => {
     publishSettings.value.categoryId = selectedCategory.value.id
+}
+
+const onUploaded = (files) => {
+    selectedImage.value = files[0];
+}
+const onRejected = (rejectedEntries) => {
+    console.log('리젝내용 -> ', rejectedEntries)
+    const failedEntry = rejectedEntries[0]
+    const failReason = failedEntry?.failedPropValidation
+
+    if (failReason == 'max-files') {
+        $q.notify({
+            type: 'negative',
+            message: `${MAX_FILE_NUMBER}개의 이미지 파일만 업로드 할 수 있습니다.`
+        })
+    }
 }
 
 const requestAICorrection = async () => {
@@ -174,6 +197,11 @@ onMounted(async () => {
                     </div>
                 </q-card-section>
 
+                <q-card-section>
+                    <q-uploader accept=".jpg, image/*" label="(선택사항) 썸네일 이미지" multiple :max-files="MAX_FILE_NUMBER"
+                        :hide-upload-btn="true" @added="onUploaded" @rejected="onRejected" />
+                </q-card-section>
+
                 <q-card-actions align="right">
                     <q-btn flat label="취소" color="primary" v-close-popup />
                     <q-btn flat label="발행" color="primary" @click="publishDiary" v-close-popup />
@@ -182,26 +210,32 @@ onMounted(async () => {
         </q-dialog>
 
         <!-- 한국어 해석 모달 -->
+        <!-- Translation Modal with Switchable Layout -->
         <q-dialog v-model="showTranslationModal">
             <q-card style="width: 900px; max-width: 90vw;">
                 <q-card-section class="row items-center q-pb-none">
                     <div class="text-h6">원문과 번역</div>
                     <q-space />
-                    <q-btn icon="close" flat round dense v-close-popup />
+                    <q-btn-group flat>
+                        <q-btn icon="view_column" :color="isHorizontalLayout ? 'primary' : 'grey'"
+                            @click="isHorizontalLayout = true" />
+                        <q-btn icon="view_stream" :color="!isHorizontalLayout ? 'primary' : 'grey'"
+                            @click="isHorizontalLayout = false" />
+                    </q-btn-group>
+                    <q-btn icon="close" flat round dense v-close-popup class="q-ml-sm" />
                 </q-card-section>
-
-                <q-card-section class="row q-col-gutter-md">
+                <q-card-section :class="{ 'row': isHorizontalLayout, 'column': !isHorizontalLayout }">
                     <!-- Revised Diary -->
-                    <div class="col-6">
+                    <div :class="{ 'col-6': isHorizontalLayout, 'q-mb-md': !isHorizontalLayout }">
                         <div class="text-subtitle2">첨삭된 일기</div>
                         <q-separator class="q-my-sm" />
                         <div v-html="revisedVersion" class="text-body2"></div>
                     </div>
                     <!-- Translation -->
-                    <div class="col-6">
+                    <div :class="{ 'col-6': isHorizontalLayout, 'q-mt-md': !isHorizontalLayout }">
                         <div class="text-subtitle2">번역</div>
                         <q-separator class="q-my-sm" />
-                        <div v-html="translation" class="text-body2 bg-additional"></div>
+                        <div v-html="translation" class="text-body2 bg-yellow"></div>
                     </div>
                 </q-card-section>
             </q-card>
@@ -215,7 +249,7 @@ onMounted(async () => {
     height: 100%
 }
 
-.bg-additional {
+.bg-yellow {
     background-color: #fbfbeb
 }
 </style>
