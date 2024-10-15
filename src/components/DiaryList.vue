@@ -1,14 +1,27 @@
 <script setup>
+import Pagination from './Pagination.vue'
 import { ref, onMounted } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
-import { htmlUtils } from '@/utils/htmlUtils';
-import { timeUtils } from '@/utils/timeUtils';
+import { htmlUtils } from '@/utils/htmlUtils'
+import { timeUtils } from '@/utils/timeUtils'
 import { useRouter } from 'vue-router';
+import { eventBus } from '@/utils/eventBus'
+
+const PAGING = {
+    size: 10,
+    page: 0
+}
 
 const categories = ref([])
+const currentCategoryId = ref(0)
 const posts = ref([])
 const router = useRouter()
+const totalPages = ref(0)
+
+const renewData = (newPage) => {
+    fetchDiaries(currentCategoryId.value, { ...PAGING, page: newPage - 1 })
+}
 
 const fetchCategories = async () => {
     const response = await apiCall(API_LIST.GET_OFFICIAL_DIARY_CATEGORIES)
@@ -17,8 +30,14 @@ const fetchCategories = async () => {
     }
 }
 
-const fetchDiaries = async (categoryId) => {
-    const response = await apiCall(API_LIST.GET_DIARIES_BY_OFFICIAL_CATEGORY(categoryId))
+const fetchDiaries = async (categoryId, pagingData) => {
+    currentCategoryId.value = categoryId
+
+    const parameters = {
+        ...pagingData
+    }
+
+    const response = await apiCall(API_LIST.GET_DIARIES_BY_OFFICIAL_CATEGORY(categoryId), parameters)
     if (response.status) {
         response.data.forEach((item) => {
             item.content = htmlUtils.stripHtml(item.content)
@@ -26,6 +45,7 @@ const fetchDiaries = async (categoryId) => {
         })
 
         posts.value = response.data
+        totalPages.value = response.pageInfo.totalPages
     }
 }
 
@@ -34,18 +54,19 @@ const viewDiaryDetail = (diaryId) => {
 }
 
 onMounted(() => {
+    eventBus.on('renew-data', renewData)
     fetchCategories()
-    fetchDiaries(0)
+    fetchDiaries(0, PAGING)
 })
 
 </script>
 
 <template>
     <div>
-        <q-btn @click="fetchDiaries(0)">
+        <q-btn @click="fetchDiaries(0, PAGING)">
             all
         </q-btn>
-        <q-btn @click="fetchDiaries(category.id)" v-for="category in categories" :key="category.id">
+        <q-btn @click="fetchDiaries(category.id, PAGING)" v-for="category in categories" :key="category.id">
             {{ category.name }}
         </q-btn>
     </div>
@@ -84,6 +105,7 @@ onMounted(() => {
             </q-list>
         </div>
     </q-page>
+    <Pagination :totalPages="totalPages" />
 </template>
 
 <style scoped>
