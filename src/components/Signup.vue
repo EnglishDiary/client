@@ -48,9 +48,16 @@ const onSubmit = async () => {
         email: userId.value,
         name: nickname.value,
         password: password.value,
-        imageUrl: url
+        imageUrl: url,
     }
-    const response = await apiCall(API_LIST.SIGNUP, parameters)
+    // const response = await apiCall(API_LIST.SIGNUP, parameters)
+    // if (response.statusCode === 'OK') {
+    //     router.push('/login')
+    // } else {
+    //     alert(response.message)
+    // }
+
+    const response = await apiCallWithFileUpload(API_LIST.SIGNUP, parameters, profileImage.value)
     if (response.statusCode === 'OK') {
         router.push('/login')
     } else {
@@ -78,11 +85,11 @@ const onSubmit = async () => {
 
                             <q-input v-model="password" label="비밀번호" type="password" :rules="passwordRules" />
 
-                            <!-- <q-file v-model="profileImage" label="프로필 이미지" accept="image/*">
+                            <q-file v-model="profileImage" label="프로필 이미지" accept="image/*">
                                 <template v-slot:prepend>
                                     <q-icon name="attach_file" />
                                 </template>
-</q-file> -->
+                            </q-file>
 
                             <div>
                                 <q-btn label="가입하기" type="submit" color="primary" />
