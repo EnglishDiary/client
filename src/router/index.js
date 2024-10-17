@@ -13,6 +13,7 @@ import NotFound from '@/components/NotFound.vue'
 import { useAuthStore } from '@/store/auth'
 import WriteExpressionView from '@/views/WriteExpressionView.vue'
 import ExpressionListView from '@/views/ExpressionListView.vue'
+import ExamView from '@/views/ExamView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -105,6 +106,11 @@ const router = createRouter({
           path: 'expression/list',
           name: 'ExpresionList',
           component: ExpressionListView
+        },
+        {
+          path: 'exam/writing',
+          name: 'WritingExam',
+          component: ExamView
         }
       ]
     },
