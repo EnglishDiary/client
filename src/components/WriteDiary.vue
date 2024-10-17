@@ -2,6 +2,8 @@
 <!-- TODO 240908 AI 첨삭 데이터를 2번 이상 요청할 수 있는데, 기존 것도 볼 수 있도록 리스트화 시키기-->
 <!-- TODO 240915 AI 첨삭 요청 중일 때는 첨삭버튼 비활성화 -->
 <script setup>
+import TranslationModal from './TranslationModal.vue';
+
 import { apiCall, apiCallWithFileUpload } from '@/utils/apiCall';
 import { API_LIST } from '@/utils/apiList';
 import { ref, onMounted } from 'vue'
@@ -59,6 +61,7 @@ const publishDiary = async () => {
         isRevisionPublic: showRevisedDiary,
         isFeedbackPublic: showFeedback,
         officialCategoryId: categoryId,
+        translation: translation.value,
     }
 
     const response = await apiCallWithFileUpload(API_LIST.PUBLISH_DIARY, parameters, selectedImage.value)
@@ -209,37 +212,8 @@ onMounted(async () => {
             </q-card>
         </q-dialog>
 
-        <!-- 한국어 해석 모달 -->
-        <!-- Translation Modal with Switchable Layout -->
-        <q-dialog v-model="showTranslationModal">
-            <q-card style="width: 900px; max-width: 90vw;">
-                <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">원문과 번역</div>
-                    <q-space />
-                    <q-btn-group flat>
-                        <q-btn icon="view_column" :color="isHorizontalLayout ? 'primary' : 'grey'"
-                            @click="isHorizontalLayout = true" />
-                        <q-btn icon="view_stream" :color="!isHorizontalLayout ? 'primary' : 'grey'"
-                            @click="isHorizontalLayout = false" />
-                    </q-btn-group>
-                    <q-btn icon="close" flat round dense v-close-popup class="q-ml-sm" />
-                </q-card-section>
-                <q-card-section :class="{ 'row': isHorizontalLayout, 'column': !isHorizontalLayout }">
-                    <!-- Revised Diary -->
-                    <div :class="{ 'col-6': isHorizontalLayout, 'q-mb-md': !isHorizontalLayout }">
-                        <div class="text-subtitle2">첨삭된 일기</div>
-                        <q-separator class="q-my-sm" />
-                        <div v-html="revisedVersion" class="text-body2"></div>
-                    </div>
-                    <!-- Translation -->
-                    <div :class="{ 'col-6': isHorizontalLayout, 'q-mt-md': !isHorizontalLayout }">
-                        <div class="text-subtitle2">번역</div>
-                        <q-separator class="q-my-sm" />
-                        <div v-html="translation" class="text-body2 bg-yellow"></div>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
+        <TranslationModal :translation="translation" :revisedVersion="revisedVersion" v-model="showTranslationModal">
+        </TranslationModal>
 
     </q-page>
 </template>
