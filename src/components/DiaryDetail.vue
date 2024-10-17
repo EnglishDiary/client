@@ -1,4 +1,6 @@
 <script setup>
+import TranslationModal from './TranslationModal.vue';
+
 import { ref, onMounted } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
@@ -6,6 +8,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const detail = ref({})
+const showTranslationModal = ref(false)
 
 const fetchDiaryDetail = async () => {
     const diaryId = route.params.id
@@ -14,6 +17,10 @@ const fetchDiaryDetail = async () => {
         detail.value = response.data
     }
 
+}
+
+const openTranslationModal = () => {
+    showTranslationModal.value = true
 }
 
 onMounted(() => {
@@ -56,6 +63,7 @@ onMounted(() => {
                             <div class="q-pa-sm" style="min-height: 250px;">
                                 <div v-html="detail.aiRevisedDiary"></div>
                             </div>
+                            <q-btn @click="openTranslationModal">해석보기</q-btn>
                         </q-card-section>
                     </q-card>
                 </div>
@@ -71,6 +79,10 @@ onMounted(() => {
             </q-card>
 
         </div>
+
+        <TranslationModal :translation="detail.translation" :revisedVersion="detail.aiRevisedDiary"
+            v-model="showTranslationModal">
+        </TranslationModal>
 
     </q-page>
 
