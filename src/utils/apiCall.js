@@ -7,7 +7,6 @@ const ACCESS_TOKEN = 'access_token'
 // TODO 240909 signup, login과 같이 토큰 필요없는 요청은 토큰 세팅없이 요청 보내는 게 맞음
 const setUserToken = (header) => {
     const userToken = localStorage.getItem(ACCESS_TOKEN);
-    console.log('setUserToken 호출')
     if (userToken) {
         header.Authorization = `Bearer ${userToken}`
     }
