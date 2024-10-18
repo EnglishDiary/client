@@ -5,7 +5,6 @@ import { apiCall } from '@/utils/apiCall'
 import { commonUtils } from '@/utils/commonUtils';
 
 const currentData = ref(null)
-const userSentence = ref('')
 const userResult = ref('')
 
 const totalResult = []
@@ -24,30 +23,27 @@ const fetchExamSentences = async () => {
             const words = item.sourceSentence.split(' ')
             item.randomWords = commonUtils.shuffleArray(words)
             item.totalWordCount = words.length
+            item.wordOrders = []
+            item.isWordClicked = Array(words.length).fill(false);
         })
 
         currentData.value = originalData[currentIndex]
-        let clicked = []
-        for (let i = 0; i < currentData.value.randomWords.length; i++) {
-            clicked.push(false)
-        }
-        currentData.value.clicked = clicked
     }
 }
 
 const toggleWord = (selectedWord, index) => {
-    const clicked = currentData.value.clicked
-    if (!clicked[index]) {
+    const clickedArray = currentData.value.isWordClicked
+
+    if (!clickedArray[index]) {
         countOfClickedWords++
-        clicked[index] = true
-        if (userSentence.value == '') {
-            userSentence.value += selectedWord
-            return
-        }
-        userSentence.value += ' ' + selectedWord
+        clickedArray[index] = true
+        currentData.value.wordOrders.push(index)
     } else {
         countOfClickedWords--
-        clicked[index] = false
+        clickedArray[index] = false
+        currentData.value.wordOrders = currentData.value.wordOrders.filter((order) => {
+            return order !== index
+        })
     }
 
     if (currentData.value.totalWordCount == countOfClickedWords) {
@@ -56,24 +52,56 @@ const toggleWord = (selectedWord, index) => {
     }
 }
 
+const toggleWordSelection = (selectedWord, index) => {
+    const { isWordClicked, wordOrders, totalWordCount } = currentData.value;
+    if (!isWordClicked[index]) {
+        countOfClickedWords++;
+        isWordClicked[index] = true;
+        wordOrders.push(index);
+    } else {
+        countOfClickedWords--;
+        isWordClicked[index] = false;
+        currentData.value.wordOrders = wordOrders.filter(order => order !== index);
+    }
+
+    if (totalWordCount == countOfClickedWords) {
+        checkUserSentence()
+        moveToNextWord()
+    }
+}
+
+
 const checkUserSentence = () => {
-    if (userSentence.value == currentData.value.sourceSentence) {
+    const correctSentence = currentData.value.sourceSentence
+    const correctWordOrders = correctSentence.split(' ')
+
+    let isCorrect = true
+    let userSentence = ''
+    currentData.value.wordOrders.forEach((order, index) => {
+        userSentence += currentData.value.randomWords[order] + ' '
+        if (correctWordOrders[index] != currentData.value.randomWords[order]) {
+            isCorrect = false
+        }
+    })
+
+    if (isCorrect) {
         userResult.value = 'Great :)'
         currentData.value.isCorrect = true
     } else {
         userResult.value = 'Wrong :('
         currentData.value.isCorrect = false
     }
+
+    currentData.userSentence = userSentence
 }
 
 const moveToNextWord = () => {
-    currentData.userSentence = userSentence.value
+    // 241018 TODO: 문제 끝까지 도달했을 때 통계처리 필요
     totalResult.push(currentData.value)
 
     currentIndex++
     setTimeout(() => {
         countOfClickedWords = 0
-        userSentence.value = ''
         userResult.value = ''
 
         currentData.value = originalData[currentIndex]
@@ -81,13 +109,12 @@ const moveToNextWord = () => {
 }
 
 const reset = () => {
-    const clicked = currentData.value.clicked
-    userSentence.value = ''
+    const clickedArray = currentData.value.isWordClicked
+    currentData.value.wordOrders = []
     countOfClickedWords = 0
-    for (let i = 0; i < clicked.length; i++) {
-        clicked[i] = false
+    for (let i = 0; i < clickedArray.length; i++) {
+        clickedArray[i] = false
     }
-
 }
 
 onMounted(() => {
@@ -101,16 +128,24 @@ onMounted(() => {
         <span>{{ currentData.translation }}</span>
 
         <div class="word-groups" v-for="(word, index) in currentData.randomWords" :key="word.id">
-            <q-btn @click="toggleWord(word, index)" :color="currentData.clicked[index] ? 'secondary' : 'info'">{{ word
-                }}</q-btn>
+            <q-btn @click="toggleWordSelection(word, index)"
+                :color="currentData.isWordClicked[index] ? 'secondary' : 'info'">
+                {{ word }}</q-btn>
         </div>
 
         <q-btn color="primary" @click="reset">Reset</q-btn>
         <br>
-        <span>{{ userSentence }}</span>
+
+        <div>
+            <span v-for="(order, index) in currentData.wordOrders" :key="index">
+                {{ currentData.randomWords[order] + ' ' }}
+            </span>
+        </div>
 
         <div v-if="userResult">
             <span>{{ userResult }}</span>
+            <br>
+            <span>정답: {{ currentData.sourceSentence }}</span>
         </div>
 
     </div>
