@@ -5,7 +5,20 @@ const commonUtils = {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+    },
+    combineWords: (words, combineCount) => {
+        return words.reduce((result, word, index) => {
+            const groupIndex = Math.floor(index / combineCount);
+            if (index % combineCount === 0) {
+                result.push(word);
+            } else {
+                result[groupIndex] += ' ' + word;
+            }
+            return result;
+        }, []);
     }
+
+
 }
 
 export { commonUtils }
