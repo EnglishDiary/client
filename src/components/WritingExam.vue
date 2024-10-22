@@ -8,7 +8,7 @@ const props = defineProps({
     practiceInfo: Object,
 })
 
-const currentData = ref(null)
+const currentData = ref({})
 const userResult = ref('')
 const finished = ref(false)
 
@@ -112,29 +112,67 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="q-pa-md" v-if="currentData">
-        <span>{{ currentData.translation }}</span>
+    <q-page class="flex flex-center q-pa-sm">
+        <q-card class="word-placement-card q-pa-md">
+            <q-card-section>
+                <div class="text-subtitle1 text-center q-mb-sm">{{ currentData.translation }}</div>
+                <div class="word-groups q-gutter-xs q-mb-md">
+                    <q-btn v-for="(word, index) in currentData.randomWords" :key="word.id"
+                        @click="toggleWordSelection(word, index)"
+                        :color="currentData.isWordClicked[index] ? 'secondary' : 'primary'" :disable="finished" rounded
+                        dense unelevated class="text-caption q-pa-sm">
+                        {{ word }}
+                    </q-btn>
+                </div>
+            </q-card-section>
 
-        <div class="word-groups" v-for="(word, index) in currentData.randomWords" :key="word.id">
-            <q-btn @click="toggleWordSelection(word, index)"
-                :color="currentData.isWordClicked[index] ? 'secondary' : 'info'" :disable="finished">
-                {{ word }}</q-btn>
-        </div>
+            <q-card-section class="q-pa-sm">
+                <div class="row items-center q-mb-xs">
+                    <div class="text-caption q-mr-sm">Your Answer:</div>
+                    <q-btn color="negative" @click="reset" :disable="finished" rounded dense unelevated
+                        class="text-caption">
+                        Reset
+                    </q-btn>
+                </div>
+                <div class="user-answer q-pa-sm q-mb-md">
+                    <span v-for="(order, index) in currentData.wordOrders" :key="index" class="q-mr-xs text-body2">
+                        {{ currentData.randomWords[order] }}
+                    </span>
+                </div>
+            </q-card-section>
 
-        <q-btn color="primary" @click="reset" :disable="finished">Reset</q-btn>
-        <br>
+            <q-card-section v-if="userResult" class="q-pa-sm">
+                <div class="result-feedback q-mb-md"
+                    :class="{ 'correct': currentData.isCorrect, 'incorrect': !currentData.isCorrect }">
+                    <q-icon :name="currentData.isCorrect ? 'check_circle' : 'cancel'" size="28px" class="q-mr-sm" />
+                    <span class="text-subtitle1">{{ userResult }}</span>
+                </div>
+                <div v-if="!currentData.isCorrect" class="correct-answer q-pa-sm q-mb-md">
+                    <div class="text-caption q-mb-xs">Correct Answer:</div>
+                    <div class="text-body2">{{ currentData.sourceSentence }}</div>
+                </div>
+            </q-card-section>
 
-        <div>
-            <span v-for="(order, index) in currentData.wordOrders" :key="index">
-                {{ currentData.randomWords[order] + ' ' }}
-            </span>
-        </div>
-
-        <div v-if="userResult">
-            <span>{{ userResult }}</span>
-            <br>
-            <span>정답: {{ currentData.sourceSentence }}</span>
-        </div>
-
-    </div>
+        </q-card>
+    </q-page>
 </template>
+
+
+<style scoped>
+.word-placement-card {
+    max-width: 500px;
+    width: 100%;
+}
+
+.word-groups {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.user-answer {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    min-height: 40px;
+}
+</style>
