@@ -11,6 +11,9 @@ const props = defineProps({
 const currentData = ref({})
 const userResult = ref('')
 const finished = ref(false)
+const showTranslation = ref(false)
+const canGoPrev = ref(false)
+const canGoNext = ref(true)
 
 const totalResult = []
 let originalData = []
@@ -43,6 +46,18 @@ const fetchExamSentences = async () => {
     }
 }
 
+const goToPrevious = () => {
+    moveToPreviousWord()
+}
+
+const goToNext = () => {
+    moveToNextWord()
+}
+
+const toggleTranslation = () => {
+    showTranslation.value = !showTranslation.value
+}
+
 const toggleWordSelection = (selectedWord, index) => {
     const { isWordClicked, wordOrders, totalWordCount } = currentData.value;
     if (!isWordClicked[index]) {
@@ -58,10 +73,8 @@ const toggleWordSelection = (selectedWord, index) => {
     if (totalWordCount == countOfClickedWords) {
         finished.value = true
         checkUserSentence()
-        moveToNextWord()
     }
 }
-
 
 const checkUserSentence = () => {
     const correctSentence = currentData.value.sourceSentence
@@ -82,18 +95,37 @@ const checkUserSentence = () => {
     currentData.userSentence = userSentence
 }
 
+const moveToPreviousWord = () => {
+    currentIndex--
+    canGoNext.value = true
+    if (currentIndex == 0) {
+        canGoPrev.value = false
+    }
+
+    countOfClickedWords = 0
+    currentData.value = originalData[currentIndex]
+
+    userResult.value = ''
+    finished.value = false
+}
+
 const moveToNextWord = () => {
     // 241018 TODO: 문제 끝까지 도달했을 때 통계처리 필요
-    totalResult.push(currentData.value)
+    if (finished) {
+        totalResult.push(currentData.value)
+    }
 
     currentIndex++
-    setTimeout(() => {
-        countOfClickedWords = 0
-        userResult.value = ''
+    canGoPrev.value = true
+    if (currentIndex == originalData.length - 1) {
+        canGoNext.value = false
+    }
 
-        currentData.value = originalData[currentIndex]
-        finished.value = false
-    }, 4000);
+    countOfClickedWords = 0
+    currentData.value = originalData[currentIndex]
+
+    userResult.value = ''
+    finished.value = false
 }
 
 const reset = () => {
@@ -113,9 +145,22 @@ onMounted(() => {
 
 <template>
     <q-page class="flex flex-center q-pa-sm">
-        <q-card class="word-placement-card q-pa-md">
+        <q-card class="word-placement-card q-pa-sm">
+            <q-card-section class="row items-center justify-between q-pa-none">
+                <q-btn icon="navigate_before" rounded dense unelevated @click="goToPrevious" :disable="!canGoPrev">
+                    Previous
+                </q-btn>
+                <q-btn icon-right="navigate_next" rounded dense unelevated @click="goToNext" :disable="!canGoNext">
+                    Next
+                </q-btn>
+            </q-card-section>
+
             <q-card-section>
-                <div class="text-subtitle1 text-center q-mb-sm">{{ currentData.translation }}</div>
+                <q-item class="text-subtitle1 text-center q-mb-sm cursor-pointer" style="background-color: aliceblue;"
+                    clickable @click="toggleTranslation">
+                    <span v-if="showTranslation">{{ currentData.translation }}</span>
+                    <span v-else class="text-primary">한국어 문장 보기</span>
+                </q-item>
                 <div class="word-groups q-gutter-xs q-mb-md">
                     <q-btn v-for="(word, index) in currentData.randomWords" :key="word.id"
                         @click="toggleWordSelection(word, index)"
