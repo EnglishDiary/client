@@ -1,17 +1,17 @@
-<!-- TODO 241023 데이터 조회 후 없는 거 확인됐을 때만 저장된 단어 없습니다 표출해야 함 -->
+<!-- TODO 241023 데이터 조회 후 없는 거 확인됐을 때만 저장된 단어 없습니다 표출해야 함(불러오기 전까지는 로딩바..) -->
 <template>
-    <div>
-        <q-btn @click="getWordsByCategory(0)">
-            all
-        </q-btn>
-        <q-btn @click="getWordsByCategory(category.id)" v-for="category in categories" :key="category.id">
-            {{ category.name }}
-        </q-btn>
+    <div class="q-pt-md q-pl-md bg-grey-2">
+        <q-select v-model="currentCategoryId" :options="categoryOptions" class="category-select q-mb-md" outlined dense
+            options-dense emit-value map-options @update:model-value="handleCategoryChange">
+            <template v-slot:prepend>
+                <q-icon name="format_list_bulleted" />
+            </template>
+        </q-select>
     </div>
 
     <div class="q-pa-md">
         <div v-for="word in wordList" :key="word.id" class="q-mb-md">
-            <q-card class="my-card">
+            <q-card>
                 <q-card-section>
                     <div class="row items-center justify-between">
                         <div>
@@ -93,7 +93,7 @@
 
 <script setup>
 import WordEditting from './WordEditting.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
 import { mdiBookOutline } from '@quasar/extras/mdi-v5'
@@ -104,7 +104,18 @@ const router = useRouter()
 const wordList = ref([])
 const audio = ref(new Audio())
 const categories = ref([])
-const currentCategoryId = ref(undefined)
+const currentCategoryId = ref(0)
+
+const categoryOptions = computed(() => {
+    return [
+        { label: 'All', value: 0 },
+        ...categories.value.map(category => ({
+            label: category.name,
+            value: category.id
+        }))
+    ]
+})
+
 
 onMounted(async () => {
     const categoryRes = await apiCall(API_LIST.GET_USER_CATEGORIES)
@@ -161,6 +172,10 @@ const removeWordFromList = (targetWord) => {
     })
 }
 
+const handleCategoryChange = (categoryId) => {
+    getWordsByCategory(categoryId)
+}
+
 const getWordsByCategory = async (categoryId) => {
     console.log('카테고리 id -> ', categoryId)
     currentCategoryId.value = categoryId
@@ -199,15 +214,13 @@ const toPage = (url) => {
 </script>
 
 <style scoped>
-.my-card {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
 .empty-card {
     width: 100%;
     max-width: 350px;
 
+}
+
+.category-select {
+    max-width: 200px;
 }
 </style>
