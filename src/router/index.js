@@ -14,6 +14,8 @@ import { useAuthStore } from '@/store/auth'
 import WriteExpressionView from '@/views/WriteExpressionView.vue'
 import ExpressionListView from '@/views/ExpressionListView.vue'
 import ExamView from '@/views/ExamView.vue'
+import ScriptUploadView from '@/views/study/ScriptUploadView.vue'
+import TopicView from '@/views/study/TopicView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,6 +113,16 @@ const router = createRouter({
           path: 'exam/writing',
           name: 'WritingExam',
           component: ExamView
+        },
+        {
+          path: 'study/topic',
+          name: 'topic',
+          component: TopicView
+        },
+        {
+          path: 'study/script',
+          name: 'ScriptUpload',
+          component: ScriptUploadView
         }
       ]
     },

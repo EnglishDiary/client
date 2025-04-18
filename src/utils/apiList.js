@@ -10,7 +10,7 @@ const PATCH = 'PATCH';
 
 // TODO 240915 변수명 변경 요망
 const API_SERVER_URL = import.meta.env.VITE_API_SERVER_URL
-const API_SERVER_CALL_URL = import.meta.env.VITE_API_SERVER_URL + '/api';
+const API_SERVER_CALL_URL = import.meta.env.VITE_API_SERVER_URL;
 
 const API_LIST = {
     TEST_EP: {
@@ -120,6 +120,11 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_CALL_URL}/exam/sentences`,
         desc: '영작테스트 문장 조회'
+    },
+    UPLOAD_SCRIPT: {
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/script/upload`,
+        desc: '스크립트 업로드'
     }
 }
 
