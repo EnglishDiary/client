@@ -20,13 +20,13 @@ const API_LIST = {
     },
     SIGNUP: {
         method: POST,
-        path: `${API_SERVER_URL}/auth/signup`,
+        path: `${API_SERVER_URL}/user/signup`,
         desc: '회원가입',
         open: true,
     },
     MEMBER_LOGIN: {
         method: POST,
-        path: `${API_SERVER_URL}/auth/login`,
+        path: `${API_SERVER_URL}/user/login`,
         desc: '유저 로그인',
         open: true,
     },

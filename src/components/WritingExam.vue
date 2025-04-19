@@ -9,8 +9,6 @@ const props = defineProps({
 })
 
 const currentData = ref({})
-const userResult = ref('')
-const finished = ref(false)
 const showTranslation = ref(false)
 const canGoPrev = ref(false)
 const canGoNext = ref(true)
@@ -71,7 +69,7 @@ const toggleWordSelection = (selectedWord, index) => {
     }
 
     if (totalWordCount == countOfClickedWords) {
-        finished.value = true
+        currentData.value.finished = true
         checkUserSentence()
     }
 }
@@ -85,10 +83,10 @@ const checkUserSentence = () => {
     userSentence = userSentence.trim()
 
     if (userSentence == correctSentence) {
-        userResult.value = 'Great :)'
+        currentData.value.userResult = 'Great :)'
         currentData.value.isCorrect = true
     } else {
-        userResult.value = 'Wrong :('
+        currentData.value.userResult = 'Wrong :('
         currentData.value.isCorrect = false
     }
 
@@ -105,13 +103,13 @@ const moveToPreviousWord = () => {
     countOfClickedWords = 0
     currentData.value = originalData[currentIndex]
 
-    userResult.value = ''
-    finished.value = false
+    // currentData.value.userResult = ''
+    // currentData.value.finished = true
 }
 
 const moveToNextWord = () => {
     // 241018 TODO: 문제 끝까지 도달했을 때 통계처리 필요
-    if (finished) {
+    if (currentData.value.finished) {
         totalResult.push(currentData.value)
     }
 
@@ -124,8 +122,8 @@ const moveToNextWord = () => {
     countOfClickedWords = 0
     currentData.value = originalData[currentIndex]
 
-    userResult.value = ''
-    finished.value = false
+    // currentData.value.userResult = ''
+    // currentData.value.finished = false
 }
 
 const reset = () => {
@@ -164,8 +162,8 @@ onMounted(() => {
                 <div class="word-groups q-gutter-xs q-mb-md">
                     <q-btn v-for="(word, index) in currentData.randomWords" :key="word.id"
                         @click="toggleWordSelection(word, index)"
-                        :color="currentData.isWordClicked[index] ? 'secondary' : 'primary'" :disable="finished" rounded
-                        dense unelevated class="text-caption q-pa-sm">
+                        :color="currentData.isWordClicked[index] ? 'secondary' : 'primary'"
+                        :disable="currentData.finished" rounded dense unelevated class="text-caption q-pa-sm">
                         {{ word }}
                     </q-btn>
                 </div>
@@ -174,7 +172,7 @@ onMounted(() => {
             <q-card-section class="q-pa-sm">
                 <div class="row items-center q-mb-xs">
                     <div class="text-caption q-mr-sm">Your Answer:</div>
-                    <q-btn color="negative" @click="reset" :disable="finished" rounded dense unelevated
+                    <q-btn color="negative" @click="reset" :disable="currentData.finished" rounded dense unelevated
                         class="text-caption">
                         Reset
                     </q-btn>
@@ -186,11 +184,11 @@ onMounted(() => {
                 </div>
             </q-card-section>
 
-            <q-card-section v-if="userResult" class="q-pa-sm">
+            <q-card-section v-if="currentData.userResult" class="q-pa-sm">
                 <div class="result-feedback q-mb-md"
                     :class="{ 'correct': currentData.isCorrect, 'incorrect': !currentData.isCorrect }">
                     <q-icon :name="currentData.isCorrect ? 'check_circle' : 'cancel'" size="28px" class="q-mr-sm" />
-                    <span class="text-subtitle1">{{ userResult }}</span>
+                    <span class="text-subtitle1">{{ currentData.userResult }}</span>
                 </div>
                 <div v-if="!currentData.isCorrect" class="correct-answer q-pa-sm q-mb-md">
                     <div class="text-caption q-mb-xs">Correct Answer:</div>

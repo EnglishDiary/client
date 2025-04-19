@@ -1,19 +1,40 @@
 <script setup>
+import Pagination from './Pagination.vue';
 import { ref, onMounted } from 'vue';
 import { apiCall } from '@/utils/apiCall';
 import { API_LIST } from '@/utils/apiList';
+import { eventBus } from '@/utils/eventBus'
+
+const totalPages = ref(0)
+
+const PAGING = {
+    size: 10,
+    page: 0
+}
 
 const expressions = ref([]);
 
-const fetchExpressions = async () => {
-    const response = await apiCall(API_LIST.FETCH_EXPRESSIONS);
+const fetchExpressions = async (pagingData) => {
+    const parameters = {
+        categoryId: 1,
+        ...pagingData
+    }
+
+    const response = await apiCall(API_LIST.FETCH_EXPRESSIONS, parameters);
     if (response.status) {
-        expressions.value = response.data;
+        expressions.value = response.data
+        totalPages.value = response.pageInfo.totalPages
+        console.log('토페 -> ', totalPages)
     }
 };
 
+const renewData = (newPage) => {
+    fetchExpressions({ ...PAGING, page: newPage - 1 })
+}
+
 onMounted(() => {
-    fetchExpressions();
+    eventBus.on('renew-data', renewData)
+    fetchExpressions({ ...PAGING });
 });
 </script>
 
@@ -52,5 +73,6 @@ onMounted(() => {
                 <div>{{ expression.summary }}</div>
             </q-card-section>
         </q-card>
+        <Pagination :totalPages="totalPages" />
     </div>
 </template>

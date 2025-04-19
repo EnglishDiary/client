@@ -15,7 +15,7 @@ const changePage = async (newPage) => {
 </script>
 
 <template>
-    <div class="q-pa-lg flex flex-center">
+    <div class="q-pa-lg flex flex-center bg-grey-2">
         <q-pagination v-model="current" :max="totalPages" max-pages="10" @update:model-value="changePage"
             direction-links boundary-links icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind"
             icon-next="fast_forward" />

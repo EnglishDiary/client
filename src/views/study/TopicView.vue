@@ -1,15 +1,15 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
-    import { apiCall } from '@/utils/apiCall';
-    import { API_LIST } from '@/utils/apiList';
+import { ref, onMounted } from 'vue';
+import { apiCall } from '@/utils/apiCall';
+import { API_LIST } from '@/utils/apiList';
 
-    const fetchTopics = async () => {
-        const response = await apiCall(API_LIST.FETCH_TOPICS);
-    }
+const fetchTopics = async () => {
+    const response = await apiCall(API_LIST.FETCH_TOPICS);
+}
 
-    onMounted(() => {
-        fetchTopics();
-    });
+onMounted(() => {
+    fetchTopics();
+});
 
 
 </script>
@@ -21,7 +21,7 @@
     </div>
 
     <div>
-        <q-btn @click="">토픽 추가하기</q-btn>
+        <q-btn @click="addTopic">토픽 추가하기</q-btn>
     </div>
 
 </template>

@@ -13,7 +13,7 @@ const password = ref('');
 
 const login = async () => {
     const parameters = {
-        email: userId.value,
+        loginId: userId.value,
         password: password.value
     }
     const response = await apiCall(API_LIST.MEMBER_LOGIN, parameters)

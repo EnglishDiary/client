@@ -1,6 +1,6 @@
 <script setup>
 import Pagination from './Pagination.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
 import { htmlUtils } from '@/utils/htmlUtils'
@@ -18,6 +18,16 @@ const currentCategoryId = ref(0)
 const posts = ref([])
 const router = useRouter()
 const totalPages = ref(0)
+
+const categoryOptions = computed(() => {
+    return [
+        { label: '전체 카테고리', value: 0 },
+        ...categories.value.map(category => ({
+            label: category.name,
+            value: category.id
+        }))
+    ]
+})
 
 const renewData = (newPage) => {
     fetchDiaries(currentCategoryId.value, { ...PAGING, page: newPage - 1 })
@@ -49,6 +59,10 @@ const fetchDiaries = async (categoryId, pagingData) => {
     }
 }
 
+const handleCategoryChange = (categoryId) => {
+    fetchDiaries(categoryId, PAGING)
+}
+
 const viewDiaryDetail = (diaryId) => {
     router.push(`/diary/${diaryId}/detail`)
 }
@@ -58,17 +72,16 @@ onMounted(() => {
     fetchCategories()
     fetchDiaries(0, PAGING)
 })
-
 </script>
 
 <template>
-    <div>
-        <q-btn @click="fetchDiaries(0, PAGING)">
-            all
-        </q-btn>
-        <q-btn @click="fetchDiaries(category.id, PAGING)" v-for="category in categories" :key="category.id">
-            {{ category.name }}
-        </q-btn>
+    <div class="q-pt-md q-pl-md bg-grey-2">
+        <q-select v-model="currentCategoryId" :options="categoryOptions" class="category-select q-mb-md" outlined dense
+            options-dense emit-value map-options @update:model-value="handleCategoryChange">
+            <template v-slot:prepend>
+                <q-icon name="format_list_bulleted" />
+            </template>
+        </q-select>
     </div>
 
     <q-page class="bg-grey-2">
@@ -88,7 +101,8 @@ onMounted(() => {
 
                         <q-item-label class="text-h6 q-mb-sm">{{ post.title }}</q-item-label>
                         <q-item-label class="q-mb-sm text-body2 text-grey-8 content"
-                            @click="viewDiaryDetail(post.id)">{{ post.content }}</q-item-label>
+                            @click="viewDiaryDetail(post.id)">{{
+                                post.content }}</q-item-label>
 
                         <div class="row items-center q-mt-sm">
                             <q-icon name="favorite_border" size="sm" color="grey" />
@@ -109,6 +123,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.category-select {
+    max-width: 200px;
+}
+
 .content {
     overflow: hidden;
     text-overflow: ellipsis;

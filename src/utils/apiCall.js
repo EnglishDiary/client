@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-const jsonHeader = { 'Content-Type': 'application/json' }
+const defaultHeader = { 'Content-Type': 'application/json' }
 const formHeader = { 'Content-Type': 'multipart/form-data' }
 const ACCESS_TOKEN = 'access_token'
 
-// TODO 240909 signup, login과 같이 토큰 필요없는 요청은 토큰 세팅없이 요청 보내는 게 맞음
 const setUserToken = (header) => {
     const userToken = localStorage.getItem(ACCESS_TOKEN);
     if (userToken) {
@@ -52,8 +51,8 @@ const handleErrorByCode = (code, data) => {
 };
 
 const apiCall = (apiSpec, parameters, customHeader) => {
-    const header = { ...jsonHeader, customHeader };
-    if (!apiSpec.open) {
+    const header = { ...defaultHeader, ...customHeader };
+    if (!apiSpec?.open) {
         setUserToken(header);
     }
 
@@ -73,7 +72,7 @@ const apiCall = (apiSpec, parameters, customHeader) => {
 };
 
 const apiCallWithFileUpload = (apiSpec, parameters, file, customHeader) => {
-    const header = { ...formHeader, customHeader };
+    const header = { ...formHeader, ...customHeader };
     if (!apiSpec.open) {
         setUserToken(header);
     }

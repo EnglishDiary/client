@@ -18,6 +18,8 @@ const topics = [
     { label: '여행', value: '1', icon: 'flight' },
     { label: '음식', value: '2', icon: 'restaurant' },
     { label: '취미', value: '3', icon: 'sports_basketball' },
+    { label: '가족', value: '4', icon: 'diversity_1' },
+    { label: '학교생활', value: '5', icon: 'school' },
 ];
 
 const isFormValid = computed(() => {
@@ -61,7 +63,7 @@ const startPractice = () => {
                     <div v-for="topic in topics" :key="topic.value" class="col-6 col-sm-4">
                         <q-card clickable v-ripple :class="{ 'bg-primary text-white': selectedTopic === topic.value }"
                             @click="selectedTopic = topic.value">
-                            <q-card-section class="text-center">
+                            <q-card-section class="text-center cursor-pointer">
                                 <q-icon :name="topic.icon" size="3rem" />
                                 <div class="text-subtitle1 q-mt-sm">{{ topic.label }}</div>
                             </q-card-section>

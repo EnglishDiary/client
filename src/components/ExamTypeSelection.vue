@@ -50,7 +50,7 @@ const sentenceCountOptions = [
 ]
 
 const sentenceSetOptions = [
-    { label: '기존 SET', value: 'existing' },
+    // { label: '기존 SET', value: 'existing' },
     // { label: '새로운 SET', value: 'new' },
 ]
 

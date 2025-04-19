@@ -20,8 +20,7 @@ const byWebsite = ref('')
 const byDate = ref('Any time')
 
 const links1 = [
-    { icon: mdiBookPlus, text: '영단어 등록', url: '/word' },
-    { icon: mdiBookOpenVariant, text: '나의 단어장', url: '/word/list/mine' },
+    { icon: 'quiz', text: '영작 퀴즈', url: '/exam/writing' },
 ]
 
 const links2 = [
@@ -31,11 +30,16 @@ const links2 = [
 ]
 
 const links3 = [
+    { icon: mdiBookPlus, text: '영단어 등록', url: '/word' },
+    { icon: mdiBookOpenVariant, text: '나의 단어장', url: '/word/list/mine' },
+]
+
+const links4 = [
     { icon: mdiFormatLetterCase, text: '짧은 영작', url: '/expression' },
     { icon: mdiPaperclip, text: '표현 보기', url: '/expression/list' },
 ]
 
-const links4 = [
+const links5 = [
     { icon: '', text: 'Language & region' },
     { icon: '', text: 'Settings' },
 ]
@@ -213,7 +217,19 @@ function toMyPage() {
 
                     <q-separator inset class="q-my-sm" />
 
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links4" :key="link.text" clickable>
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links4" :key="link.text"
+                        @click="toPage(link.url)" clickable>
+                        <q-item-section avatar>
+                            <q-icon :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-separator inset class="q-my-sm" />
+
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links5" :key="link.text" clickable>
                         <q-item-section>
                             <q-item-label>{{ link.text }} <q-icon v-if="link.icon" :name="link.icon" /></q-item-label>
                         </q-item-section>
@@ -234,7 +250,8 @@ function toMyPage() {
             </q-scroll-area>
         </q-drawer>
 
-        <q-page-container>
+        <!-- MEMO 241026 주 컨텐츠 백그라운드 배경 설정: bg-grey-2 -->
+        <q-page-container class="bg-grey-2">
             <router-view />
         </q-page-container>
     </q-layout>

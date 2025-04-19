@@ -1,95 +1,4 @@
 <!-- TODO 241023 데이터 조회 후 없는 거 확인됐을 때만 저장된 단어 없습니다 표출해야 함(불러오기 전까지는 로딩바..) -->
-<template>
-    <div class="q-pt-md q-pl-md bg-grey-2">
-        <q-select v-model="currentCategoryId" :options="categoryOptions" class="category-select q-mb-md" outlined dense
-            options-dense emit-value map-options @update:model-value="handleCategoryChange">
-            <template v-slot:prepend>
-                <q-icon name="format_list_bulleted" />
-            </template>
-        </q-select>
-    </div>
-
-    <div class="q-pa-md">
-        <div v-for="word in wordList" :key="word.id" class="q-mb-md">
-            <q-card>
-                <q-card-section>
-                    <div class="row items-center justify-between">
-                        <div>
-                            <span class="text-h5">{{ word.word }}</span>
-                            <span class="text-subtitle1 q-ml-sm">( {{ word.phonetic }} )</span>
-                        </div>
-                        <div>
-                            <q-btn v-if="word.isEditting" @click="completeEdit(word)" color="positive" label="편집완료" />
-                            <q-btn v-else @click="editWord(word)" color="primary" label="수정하기" />
-                            <q-btn @click="deleteWord(word)" color="negative" label="삭제하기" class="q-ml-sm" />
-                        </div>
-                    </div>
-                </q-card-section>
-
-                <q-card-section>
-                    <div class="row q-gutter-sm">
-                        <q-btn v-for="phonetic in word.phonetics" :key="phonetic.audio"
-                            @click="playAudio(phonetic.audio)" color="secondary"
-                            :label="identifyCountry(phonetic.audio)" icon="volume_up" />
-                    </div>
-                </q-card-section>
-
-                <q-card-section>
-                    <WordEditting v-if="word.isEditting" :wordDetail="word" :categories="categories" />
-                    <template v-else>
-                        <q-tabs v-model="word.activeTab" dense class="text-primary" active-color="primary"
-                            indicator-color="primary" align="justify" narrow-indicator>
-                            <q-tab v-for="(meaning, index) in word.meanings" :key="index" :name="index"
-                                :label="meaning.partOfSpeech" />
-                        </q-tabs>
-
-                        <q-separator />
-
-                        <q-tab-panels v-model="word.activeTab" animated>
-                            <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
-                                <div v-for="(item, defIndex) in meaning.definitions" :key="defIndex" class="q-mb-md">
-                                    <div class="text-subtitle1 q-mb-xs">Definition {{ defIndex + 1 }}</div>
-                                    <div class="q-ml-sm">{{ item.definition }}</div>
-
-                                    <div v-if="item.example || item.userExamples.length > 0" class="q-mt-sm">
-                                        <div class="text-weight-bold">Examples:</div>
-                                        <q-list dense>
-                                            <q-item v-if="item.example">
-                                                <q-item-section avatar>
-                                                    <q-icon name="book" color="primary" />
-                                                </q-item-section>
-                                                <q-item-section>{{ item.example }}</q-item-section>
-                                            </q-item>
-                                            <q-item v-for="(ex, exIndex) in item.userExamples" :key="exIndex">
-                                                <q-item-section avatar>
-                                                    <q-icon name="person" color="secondary" />
-                                                </q-item-section>
-                                                <q-item-section>{{ ex }}</q-item-section>
-                                            </q-item>
-                                        </q-list>
-                                    </div>
-                                </div>
-                            </q-tab-panel>
-                        </q-tab-panels>
-                    </template>
-                </q-card-section>
-            </q-card>
-        </div>
-
-        <div v-if="wordList.length == 0">
-            <q-page class="q-pa-md">
-                <q-card class="text-center q-pa-lg">
-                    <q-icon :name="mdiBookOutline" size="64px" color="grey-7" />
-                    <div class="text-h6 q-mt-md">저장된 단어가 없습니다</div>
-                    <div class="text-subtitle1 q-mt-sm">단어장을 채워보세요!</div>
-                    <div class="q-mt-md">
-                        <q-btn color="primary" @click="toPage('/word')">단어 찾아보기</q-btn>
-                    </div>
-                </q-card>
-            </q-page>
-        </div>
-    </div>
-</template>
 
 <script setup>
 import WordEditting from './WordEditting.vue'
@@ -98,6 +7,7 @@ import { API_LIST } from '@/utils/apiList'
 import { apiCall } from '@/utils/apiCall'
 import { mdiBookOutline } from '@quasar/extras/mdi-v5'
 import { useRouter } from 'vue-router'
+import Pagination from './Pagination.vue'
 
 const router = useRouter()
 
@@ -105,6 +15,7 @@ const wordList = ref([])
 const audio = ref(new Audio())
 const categories = ref([])
 const currentCategoryId = ref(0)
+const totalPages = ref(0)
 
 const categoryOptions = computed(() => {
     return [
@@ -115,7 +26,6 @@ const categoryOptions = computed(() => {
         }))
     ]
 })
-
 
 onMounted(async () => {
     const categoryRes = await apiCall(API_LIST.GET_USER_CATEGORIES)
@@ -212,6 +122,100 @@ const toPage = (url) => {
     router.push(url)
 }
 </script>
+
+
+<template>
+    <div class="q-pt-md q-pl-md bg-grey-2">
+        <q-select v-model="currentCategoryId" :options="categoryOptions" class="category-select q-mb-md" outlined dense
+            options-dense emit-value map-options @update:model-value="handleCategoryChange">
+            <template v-slot:prepend>
+                <q-icon name="format_list_bulleted" />
+            </template>
+        </q-select>
+    </div>
+
+    <div class="q-pa-md">
+        <div v-for="word in wordList" :key="word.id" class="q-mb-md">
+            <q-card>
+                <q-card-section>
+                    <div class="row items-center justify-between">
+                        <div>
+                            <span class="text-h5">{{ word.word }}</span>
+                            <span class="text-subtitle1 q-ml-sm">( {{ word.phonetic }} )</span>
+                        </div>
+                        <div>
+                            <q-btn v-if="word.isEditting" @click="completeEdit(word)" color="positive" label="편집완료" />
+                            <q-btn v-else @click="editWord(word)" color="primary" label="수정하기" />
+                            <q-btn @click="deleteWord(word)" color="negative" label="삭제하기" class="q-ml-sm" />
+                        </div>
+                    </div>
+                </q-card-section>
+
+                <q-card-section>
+                    <div class="row q-gutter-sm">
+                        <q-btn v-for="phonetic in word.phonetics" :key="phonetic.audio"
+                            @click="playAudio(phonetic.audio)" color="secondary"
+                            :label="identifyCountry(phonetic.audio)" icon="volume_up" />
+                    </div>
+                </q-card-section>
+
+                <q-card-section>
+                    <WordEditting v-if="word.isEditting" :wordDetail="word" :categories="categories" />
+                    <template v-else>
+                        <q-tabs v-model="word.activeTab" dense class="text-primary" active-color="primary"
+                            indicator-color="primary" align="justify" narrow-indicator>
+                            <q-tab v-for="(meaning, index) in word.meanings" :key="index" :name="index"
+                                :label="meaning.partOfSpeech" />
+                        </q-tabs>
+
+                        <q-separator />
+
+                        <q-tab-panels v-model="word.activeTab" animated>
+                            <q-tab-panel v-for="(meaning, index) in word.meanings" :key="index" :name="index">
+                                <div v-for="(item, defIndex) in meaning.definitions" :key="defIndex" class="q-mb-md">
+                                    <div class="text-subtitle1 q-mb-xs">Definition {{ defIndex + 1 }}</div>
+                                    <div class="q-ml-sm">{{ item.definition }}</div>
+
+                                    <div v-if="item.example || item.userExamples.length > 0" class="q-mt-sm">
+                                        <div class="text-weight-bold">Examples:</div>
+                                        <q-list dense>
+                                            <q-item v-if="item.example">
+                                                <q-item-section avatar>
+                                                    <q-icon name="book" color="primary" />
+                                                </q-item-section>
+                                                <q-item-section>{{ item.example }}</q-item-section>
+                                            </q-item>
+                                            <q-item v-for="(ex, exIndex) in item.userExamples" :key="exIndex">
+                                                <q-item-section avatar>
+                                                    <q-icon name="person" color="secondary" />
+                                                </q-item-section>
+                                                <q-item-section>{{ ex }}</q-item-section>
+                                            </q-item>
+                                        </q-list>
+                                    </div>
+                                </div>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </template>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div v-if="wordList.length == 0">
+            <q-page class="q-pa-md">
+                <q-card class="text-center q-pa-lg">
+                    <q-icon :name="mdiBookOutline" size="64px" color="grey-7" />
+                    <div class="text-h6 q-mt-md">저장된 단어가 없습니다</div>
+                    <div class="text-subtitle1 q-mt-sm">단어장을 채워보세요!</div>
+                    <div class="q-mt-md">
+                        <q-btn color="primary" @click="toPage('/word')">단어 찾아보기</q-btn>
+                    </div>
+                </q-card>
+            </q-page>
+        </div>
+        <Pagination :totalPages="totalPages" />
+    </div>
+</template>
 
 <style scoped>
 .empty-card {
