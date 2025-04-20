@@ -123,8 +123,12 @@ const API_LIST = {
     },
     UPLOAD_SCRIPT: {
         method: POST,
-        path: `${API_SERVER_CALL_URL}/study/script/upload`,
+        path: `${API_SERVER_CALL_URL}/study/script`,
         desc: '스크립트 업로드'
+    },
+    FETCH_TOPICS: {
+        method: GET,
+        path: `${API_SERVER_CALL_URL}/study/topics`
     }
 }
 
