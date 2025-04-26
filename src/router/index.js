@@ -16,6 +16,8 @@ import ExpressionListView from '@/views/ExpressionListView.vue'
 import ExamView from '@/views/ExamView.vue'
 import ScriptUploadView from '@/views/study/ScriptUploadView.vue'
 import TopicView from '@/views/study/TopicView.vue'
+import ChapterView from '@/views/study/ChapterView.vue'
+import ScriptView from '@/views/study/ScriptStudyView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -116,13 +118,23 @@ const router = createRouter({
         },
         {
           path: 'study/topic',
-          name: 'topic',
-          component: TopicView
+          name: 'Topic',
+          component: TopicView,
         },
         {
-          path: 'study/script',
+          path: 'study/topic/:topicId/chapters',
+          name: 'Chaper',
+          component: ChapterView,
+        },
+        {
+          path: '/study/topic/:topicId/chapter/:chapterId/script/upload',
           name: 'ScriptUpload',
           component: ScriptUploadView
+        },
+        {
+          path: '/study/topic/:topicId/chapter/:chapterId/script/:scriptId',
+          name: 'ScriptView',
+          component: ScriptView
         }
       ]
     },
