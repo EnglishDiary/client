@@ -121,15 +121,35 @@ const API_LIST = {
         path: `${API_SERVER_CALL_URL}/exam/sentences`,
         desc: '영작테스트 문장 조회'
     },
-    UPLOAD_SCRIPT: {
-        method: POST,
-        path: `${API_SERVER_CALL_URL}/study/script`,
-        desc: '스크립트 업로드'
-    },
     FETCH_TOPICS: {
         method: GET,
         path: `${API_SERVER_CALL_URL}/study/topics`
-    }
+    },
+    SAVE_TOPIC: {
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/topic`
+    },
+    FETCH_CHAPTERS: (topicId) => ({
+        method: GET,
+        path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapters`
+    }),
+    SAVE_CHAPTER: (topicId) =>  ({
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapter`
+    }),
+    UPLOAD_SCRIPT: (topicId, chapterId) => ({
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapter/${chapterId}/script`,
+    }),
+    FETCH_SCRIPT_SENTENCES: (topicId, chapterId, scriptId) => ({
+        method: GET,
+        path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapter/${chapterId}/script/${scriptId}`,
+    }),
+    ASK_AI_QUESTION: {
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/ai/asking`
+    } 
+
 }
 
 const OPEN_API_LIST = {
