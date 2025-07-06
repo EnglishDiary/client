@@ -145,10 +145,15 @@ const API_LIST = {
         method: GET,
         path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapter/${chapterId}/script/${scriptId}`,
     }),
+    FETCH_SENTENCE_CONVERSATIONS: (sentenceId) => ({
+        method: GET,
+        path: `${API_SERVER_CALL_URL}/study/sentence/${sentenceId}/conversations`,
+    }),
     ASK_AI_QUESTION: {
         method: POST,
         path: `${API_SERVER_CALL_URL}/study/ai/asking`
-    } 
+    },
+    
 
 }
 
