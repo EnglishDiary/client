@@ -132,7 +132,11 @@ const API_LIST = {
     FETCH_CHAPTERS: (topicId) => ({
         method: GET,
         path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapters`
-    }),
+    }),    
+    FETCH_CHAPTER: (chapterId) => ({
+        method: GET,
+        path: `${API_SERVER_CALL_URL}/study/chapter/${chapterId}`,
+    }),    
     SAVE_CHAPTER: (topicId) =>  ({
         method: POST,
         path: `${API_SERVER_CALL_URL}/study/topic/${topicId}/chapter`
@@ -153,7 +157,10 @@ const API_LIST = {
         method: POST,
         path: `${API_SERVER_CALL_URL}/study/ai/asking`
     },
-    
+    SAVE_BOOKMARK: (chapterId, bookmarkIndex) => ({
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/chapter/${chapterId}/bookmark/${bookmarkIndex}`,
+    }),    
 
 }
 
