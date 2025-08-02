@@ -44,12 +44,15 @@ const onSubmit = async () => {
 
     const url = await getRandomPokeImgUrl();
 
+    console.log('url -> ', url)
+
     const parameters = {
-        email: userId.value,
-        name: nickname.value,
+        memberId: userId.value,
+        nickname: nickname.value,
         password: password.value,
-        imageUrl: url,
+        profileUrl: url,
     }
+
     // const response = await apiCall(API_LIST.SIGNUP, parameters)
     // if (response.statusCode === 'OK') {
     //     router.push('/login')
@@ -57,7 +60,7 @@ const onSubmit = async () => {
     //     alert(response.message)
     // }
 
-    const response = await apiCallWithFileUpload(API_LIST.SIGNUP, parameters, profileImage.value)
+    const response = await apiCall(API_LIST.SIGNUP, parameters)
     if (response.statusCode === 'OK') {
         router.push('/login')
     } else {
