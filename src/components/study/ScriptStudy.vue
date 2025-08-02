@@ -9,6 +9,7 @@ const route = useRoute()
 const { topicId, chapterId, scriptId } = route.params
 
 const script = ref('')
+const chapter = ref({})
 const sentences = ref([])
 const currentSentenceIndex = ref(0)
 const userQuestion = ref('')
@@ -16,6 +17,9 @@ const conversations = ref([])
 const loading = ref(false)
 const showMoveInput = ref(false)
 const specificSentenceIndex = ref(0)
+const prevSentenceCount = ref(0)
+const nextSentenceCount = ref(0)
+
 
 // Fetch the script sentences
 const fetchScriptSentences = async () => {
@@ -36,6 +40,13 @@ const fetchScriptConversations = async () => {
   if (response.status) {
     conversations.value[currentSentenceIndex.value] = response.data
   }
+}
+
+const fetchChapter = async () => {
+  const response = await apiCall(API_LIST.FETCH_CHAPTER(chapterId))
+  if (response.status) {
+    chapter.value = response.data    
+  }  
 }
 
 // Computed property to get the current sentence
@@ -63,8 +74,18 @@ const toggleMoveInput = () => {
 }
 
 const goToSpecific = () => {
-  console.log(specificSentenceIndex.value)
+  if (specificSentenceIndex.value < 0 || specificSentenceIndex.value > sentences.value.length - 1) {
+    alert('Invalid Index')
+    return
+  }
+
   currentSentenceIndex.value = Number.parseInt(specificSentenceIndex.value)
+  showMoveInput.value = !showMoveInput.value
+  loadConversation()
+}
+
+const goToBookmark = () => {
+  currentSentenceIndex.value = Number.parseInt(chapter.value.bookmarkIndex)
   loadConversation()
 }
 
@@ -76,6 +97,39 @@ const goToNext = () => {
   loadConversation()
 }
 
+const InitializeRange = () => {
+  prevSentenceCount.value = 0
+  nextSentenceCount.value = 0
+}
+
+const validateRange = (start, end) => {
+  console.log(start, end)
+  if (start == 0 && end == 0) {
+    return false
+  }
+
+  if (start < 0) {
+    return false
+  }
+
+  if (end > sentences.value.length - 1) {
+    return false
+  }
+
+  return true
+}
+
+const saveBookmark = () => {
+  const currentIndex = currentSentenceIndex.value
+  console.log('chapter ->', chapter.value.bookmarkIndex)
+  if (chapter.value.bookmarkIndex == currentIndex) {
+    return
+  }
+  
+  chapter.value.bookmarkIndex = currentIndex
+  apiCall(API_LIST.SAVE_BOOKMARK(chapterId, currentIndex))
+}
+
 const loadConversation = () => {
   const currentConversations = conversations.value[currentSentenceIndex.value]
   if (currentConversations.length == 0) {
@@ -85,9 +139,24 @@ const loadConversation = () => {
 
 // Function to ask a question about the current sentence
 const askQuestion = async () => {
+  const startIndex = currentSentenceIndex.value - Number.parseInt(prevSentenceCount.value)
+  const endIndex = currentSentenceIndex.value + Number.parseInt(nextSentenceCount.value)
+
+  if (!validateRange(startIndex, endIndex)) {
+    alert('Invalid Range')
+    return
+  }
+
+  const linkedSentences = []
+  for (let i=0; i<= endIndex - startIndex; i++) {
+    const sentenceIndex = startIndex + i
+    linkedSentences.push(sentences.value[sentenceIndex].passage)    
+  }
+
   if (!userQuestion.value.trim()) {
     return
   }
+
   loading.value = true
 
   try {
@@ -96,7 +165,8 @@ const askQuestion = async () => {
       topicId,
       chapterId,
       scriptId,
-      question: userQuestion.value
+      question: userQuestion.value,
+      linkedSentences,
     })
 
     if (response.status) {
@@ -125,6 +195,7 @@ const askQuestion = async () => {
 }
 
 onMounted(async () => {
+  await fetchChapter()
   await fetchScriptSentences()
   await fetchScriptConversations()
 })
@@ -140,10 +211,25 @@ onMounted(async () => {
       <q-card-section>
         <div class="text-h6">
           {{ currentSentenceIndex + 1 }} / {{ sentences.length }}
-          <q-btn @click="toggleMoveInput">
-            <span v-if="!showMoveInput">move</span>
-            <span v-else @click="goToSpecific()">finished</span>
-          </q-btn>          
+          <q-btn v-if="!showMoveInput" @click="toggleMoveInput">
+            <span>move</span>
+          </q-btn>
+          <q-btn v-else @click="goToSpecific()">
+            <span>finished</span>
+          </q-btn>
+          &nbsp;
+          <q-btn 
+            :class="{ 
+              'bookmark-active': currentSentenceIndex === chapter.bookmarkIndex 
+            }"          
+            @click="saveBookmark()">
+            save bookmark
+          </q-btn>
+          &nbsp;
+          <q-btn @click="goToBookmark()">
+            go to bookmark
+          </q-btn>
+
           <q-input v-model="specificSentenceIndex" v-if="showMoveInput" type="number"></q-input>          
         </div>
         <div class="text-h5 q-mt-sm">{{ currentSentence }}</div>
@@ -157,6 +243,13 @@ onMounted(async () => {
       <q-btn color="primary" icon="arrow_forward" label="Next" :disable="currentSentenceIndex === sentences.length - 1"
         @click="goToNext" />
     </div>
+
+    <q-btn @click="InitializeRange">
+      Initialize Range
+    </q-btn>          
+
+    <q-input v-model="prevSentenceCount" aria-label="start" type="number"></q-input>
+    <q-input v-model="nextSentenceCount" aria-label="end" type="number"></q-input>
 
     <!-- Question input -->
     <q-card class="q-mb-md">
@@ -208,5 +301,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* You can add custom styles here */
+  .bookmark-active {
+    background-color: yellowgreen
+  }
 </style>
