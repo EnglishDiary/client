@@ -89,6 +89,30 @@ const goToBookmark = () => {
   loadConversation()
 }
 
+const ttsTest = () => {
+  const ACCESS_TOKEN = 'access_token'
+
+  const userToken = localStorage.getItem(ACCESS_TOKEN);
+
+  fetch('http://localhost:8081/study/tts/synthesize', {
+      
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userToken}`
+      },
+      body: JSON.stringify({
+          text: 'Hello, this is a sample text for English learning. I am sanguk choi nice to meet you! Please introduce yourself in front of us. What I like to do is programming.',
+          languageCode: 'en-US'
+      })
+  })
+  .then(response => response.blob())
+  .then(blob => {
+      const audio = new Audio(URL.createObjectURL(blob));
+      audio.play();
+  });
+}
+
 // Function to go to the next sentence
 const goToNext = () => {
   if (currentSentenceIndex.value < sentences.value.length - 1) {
@@ -229,6 +253,11 @@ onMounted(async () => {
           <q-btn @click="goToBookmark()">
             go to bookmark
           </q-btn>
+
+          <q-btn @click="ttsTest()">
+            TTS TEST
+          </q-btn>
+          
 
           <q-input v-model="specificSentenceIndex" v-if="showMoveInput" type="number"></q-input>          
         </div>
