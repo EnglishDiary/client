@@ -17,6 +17,14 @@ const createFomrData = (parameters, file) => {
     formData.append('jsonData', new Blob([JSON.stringify(parameters)], {
         type: "application/json"
     }));
+
+    // const formData = new FormData();
+    // formData.append('file', file);
+
+    // for (const [key, value] of Object.entries(parameters)) {
+    //     formData.append('key', value);
+    // }
+
     return formData;
 }
 
@@ -71,9 +79,28 @@ const apiCall = (apiSpec, parameters, customHeader) => {
     return requestWithAxios(config);
 };
 
+const apiCallAudio = async (apiSpec, parameters, customHeader) => {
+    const headers = { ...defaultHeader, ...customHeader };
+    if (!apiSpec?.open) {
+        setUserToken(headers);
+    }
+
+    const config = {
+        method: apiSpec.method,
+        url: apiSpec.path,
+        headers,
+        responseType: 'blob',
+    };
+    
+    config.data = parameters;
+    const response = await axios(config);
+    return response.data;
+}
+
+
 const apiCallWithFileUpload = (apiSpec, parameters, file, customHeader) => {
     const header = { ...formHeader, ...customHeader };
-    if (!apiSpec.open) {
+    if (!apiSpec?.open) {
         setUserToken(header);
     }
 
@@ -88,4 +115,4 @@ const apiCallWithFileUpload = (apiSpec, parameters, file, customHeader) => {
     return requestWithAxios(config);
 }
 
-export { apiCall, apiCallWithFileUpload }
+export { apiCall, apiCallWithFileUpload, apiCallAudio }

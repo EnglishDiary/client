@@ -160,7 +160,11 @@ const API_LIST = {
     SAVE_BOOKMARK: (chapterId, bookmarkIndex) => ({
         method: POST,
         path: `${API_SERVER_CALL_URL}/study/chapter/${chapterId}/bookmark/${bookmarkIndex}`,
-    }),    
+    }),   
+    TEXT_TO_SPEECH: {
+        method: POST,
+        path: `${API_SERVER_CALL_URL}/study/tts/synthesize`
+    }
 
 }
 
