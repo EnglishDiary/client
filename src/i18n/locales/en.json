@@ -1,0 +1,15 @@
+{
+  "common": {
+    "save": "save!",
+    "cancel": "cancel!",
+    "confirm": "confirm!"
+  },
+  "menu": {
+    "home": "home!!",
+    "about": "hahaha"
+  },
+  "user": {
+    "myData": "My Data",
+    "logout": "Logout"
+  }
+}

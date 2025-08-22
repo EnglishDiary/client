@@ -5,6 +5,9 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { mdiBookPlus, mdiBookOpenVariant, mdiPencil, mdiBookAccount, mdiAccountGroup, mdiFormatLetterCase, mdiPaperclip } from '@quasar/extras/mdi-v5'
 import squirrel from '@/assets/img/squirrel.png'
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -80,6 +83,11 @@ function logout() {
 
 function toMyPage() {
     router.push('/user/manage/category')
+}
+
+const changeLocale = (lang) => {
+    locale.value = lang
+    localStorage.setItem('dbgdLocale', lang)
 }
 </script>
 
@@ -171,13 +179,22 @@ function toMyPage() {
                         <q-tooltip>Account</q-tooltip>
                     </q-btn> -->
                     <template v-if="authStore.isLoggedIn">
-                        <q-btn @click="toMyPage">내정보</q-btn>
+                        <q-btn @click="toMyPage">{{ $t('user.myData') }}</q-btn>
                         <q-btn @click="logout">로그아웃</q-btn>
                     </template>
                     <template v-else>
                         <q-btn @click="login">로그인</q-btn>
                     </template>
-
+                    <q-btn-dropdown color="secondary" label="언어">
+                        <q-list>
+                            <q-item clickable @click="changeLocale('ko')">
+                                <q-item-section>한국어</q-item-section>
+                            </q-item>
+                            <q-item clickable @click="changeLocale('en')">
+                                <q-item-section>English</q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-btn-dropdown>
                 </div>
             </q-toolbar>
         </q-header>

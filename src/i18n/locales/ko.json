@@ -1,0 +1,15 @@
+{
+  "common": {
+    "save": "저장",
+    "cancel": "취소",
+    "confirm": "확인"
+  },
+  "menu": {
+    "home": "홈",
+    "about": "소개"
+  },
+  "user": {
+    "myData": "내정보",
+    "logout": "로그아웃"
+  }
+}
