@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
 import { API_LIST } from '@/utils/apiList'
-import { apiCall } from '@/utils/apiCall'
+import { apiCall, apiCallAudio } from '@/utils/apiCall'
 import MarkedText from './MarkedText.vue'
 
 const route = useRoute()
@@ -89,28 +89,15 @@ const goToBookmark = () => {
   loadConversation()
 }
 
-const ttsTest = () => {
-  const ACCESS_TOKEN = 'access_token'
-
-  const userToken = localStorage.getItem(ACCESS_TOKEN);
-
-  fetch('http://localhost:8081/study/tts/synthesize', {
-      
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify({
-          text: 'Hello, this is a sample text for English learning. I am sanguk choi nice to meet you! Please introduce yourself in front of us. What I like to do is programming.',
-          languageCode: 'en-US'
-      })
+const ttsTest = async () => {
+  console.log('current sentence -> ', currentSentence.value)
+  
+  const audioContent = await apiCallAudio(API_LIST.TEXT_TO_SPEECH, {
+    text: currentSentence.value
   })
-  .then(response => response.blob())
-  .then(blob => {
-      const audio = new Audio(URL.createObjectURL(blob));
-      audio.play();
-  });
+
+  const audio = new Audio(URL.createObjectURL(audioContent))
+  audio.play()
 }
 
 // Function to go to the next sentence
@@ -252,16 +239,14 @@ onMounted(async () => {
           &nbsp;
           <q-btn @click="goToBookmark()">
             go to bookmark
-          </q-btn>
-
-          <q-btn @click="ttsTest()">
-            TTS TEST
-          </q-btn>
-          
-
+          </q-btn>          
           <q-input v-model="specificSentenceIndex" v-if="showMoveInput" type="number"></q-input>          
         </div>
-        <div class="text-h5 q-mt-sm">{{ currentSentence }}</div>
+        <div class="text-h5 q-mt-sm">
+          {{ currentSentence }}
+          <q-btn @click="ttsTest()" icon="headphones" color="secondary"/>
+        </div>
+        
       </q-card-section>
     </q-card>
 
