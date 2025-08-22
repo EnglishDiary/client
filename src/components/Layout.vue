@@ -19,6 +19,10 @@ const excludeWords = ref('')
 const byWebsite = ref('')
 const byDate = ref('Any time')
 
+const links0 = [
+    { icon: 'spa', text: '영어문장 분석', url: '/study/topic' },
+]
+
 const links1 = [
     { icon: 'quiz', text: '영작 퀴즈', url: '/exam/writing' },
 ]
@@ -181,6 +185,19 @@ function toMyPage() {
         <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-white" :width="200">
             <q-scroll-area class="fit">
                 <q-list padding class="text-grey-8">
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links0" :key="link.text"
+                        @click="toPage(link.url)" clickable>
+                        <q-item-section avatar>
+                            <q-icon :name="link.icon" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>{{ link.text }}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-separator inset class="q-my-sm" />
+
+
                     <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text"
                         @click="toPage(link.url)" clickable>
                         <q-item-section avatar>
