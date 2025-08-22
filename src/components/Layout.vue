@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { computed } from 'vue'
 import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
@@ -7,7 +8,7 @@ import { mdiBookPlus, mdiBookOpenVariant, mdiPencil, mdiBookAccount, mdiAccountG
 import squirrel from '@/assets/img/squirrel.png'
 import { useI18n } from 'vue-i18n'
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -22,9 +23,9 @@ const excludeWords = ref('')
 const byWebsite = ref('')
 const byDate = ref('Any time')
 
-const links0 = [
-    { icon: 'spa', text: '영어문장 분석', url: '/study/topic' },
-]
+const links0 = computed(() => [
+    { icon: 'spa', text: t('menu.analysis'), url: '/study/topic'},
+]) 
 
 const links1 = [
     { icon: 'quiz', text: '영작 퀴즈', url: '/exam/writing' },
@@ -214,7 +215,6 @@ const changeLocale = (lang) => {
 
                     <q-separator inset class="q-my-sm" />
 
-
                     <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text"
                         @click="toPage(link.url)" clickable>
                         <q-item-section avatar>
@@ -277,7 +277,7 @@ const changeLocale = (lang) => {
                             <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">Terms</a>
                             <span> · </span>
                             <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">About
-                                Dobi's garden</a>
+                                Dobby's garden</a>
                         </div>
                     </div>
                 </q-list>
