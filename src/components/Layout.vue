@@ -23,32 +23,19 @@ const excludeWords = ref('')
 const byWebsite = ref('')
 const byDate = ref('Any time')
 
-const links0 = computed(() => [
+const menuList = computed(() => [
     { icon: 'spa', text: t('menu.analysis'), url: '/study/topic'},
+    { icon: 'quiz', text: t('menu.quiz'), url: '/exam/writing' },
+    { icon: mdiPencil, text: t('menu.writeDiary'), url: '/diary/write' },
+    { icon: mdiBookAccount, text: t('menu.viewDiary'), url: '/diary/official-category/list' },
+    { icon: mdiBookPlus, text: t('menu.addWords'), url: '/word' },
+    { icon: mdiBookOpenVariant, text: t('menu.vocabulary'), url: '/word/list/mine' },
+    { icon: mdiFormatLetterCase, text: t('menu.practiceExpressions'), url: '/expression' },
+    { icon: mdiPaperclip, text: t('menu.viewExpressions'), url: '/expression/list' },
 ]) 
 
-const links1 = [
-    { icon: 'quiz', text: '영작 퀴즈', url: '/exam/writing' },
-]
-
-const links2 = [
-    { icon: mdiPencil, text: '영어일기 쓰기', url: '/diary/write' },
-    { icon: mdiBookAccount, text: '영어일기 보기', url: '/diary/official-category/list' },
-    // { icon: mdiAccountGroup, text: '타인 일기', url: '/diary/official-category/list' },
-]
-
-const links3 = [
-    { icon: mdiBookPlus, text: '영단어 등록', url: '/word' },
-    { icon: mdiBookOpenVariant, text: '나의 단어장', url: '/word/list/mine' },
-]
-
-const links4 = [
-    { icon: mdiFormatLetterCase, text: '짧은 영작', url: '/expression' },
-    { icon: mdiPaperclip, text: '표현 보기', url: '/expression/list' },
-]
-
-const links5 = [
-    { icon: '', text: 'Language & region' },
+const settingList = [
+    // { icon: '', text: 'Language & region' },
     { icon: '', text: 'Settings' },
 ]
 
@@ -100,7 +87,7 @@ const changeLocale = (lang) => {
 
                 <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
                     <img :src="squirrel" width="70px">
-                    <span class="q-ml-sm">Dobi's Garden</span>
+                    <span class="q-ml-sm">{{ $t('common.dobbyGarden') }}</span>
                 </q-toolbar-title>
 
                 <q-space />
@@ -180,13 +167,13 @@ const changeLocale = (lang) => {
                         <q-tooltip>Account</q-tooltip>
                     </q-btn> -->
                     <template v-if="authStore.isLoggedIn">
-                        <q-btn @click="toMyPage">{{ $t('user.myData') }}</q-btn>
-                        <q-btn @click="logout">로그아웃</q-btn>
+                        <q-btn @click="toMyPage">{{ $t('user.profile') }}</q-btn>
+                        <q-btn @click="logout">{{ $t('user.logout')}}</q-btn>
                     </template>
                     <template v-else>
-                        <q-btn @click="login">로그인</q-btn>
+                        <q-btn @click="login">{{ $t('user.login') }}</q-btn>
                     </template>
-                    <q-btn-dropdown color="secondary" label="언어">
+                    <q-btn-dropdown color="secondary" :label="$t('common.language')">
                         <q-list>
                             <q-item clickable @click="changeLocale('ko')">
                                 <q-item-section>한국어</q-item-section>
@@ -203,7 +190,7 @@ const changeLocale = (lang) => {
         <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-white" :width="200">
             <q-scroll-area class="fit">
                 <q-list padding class="text-grey-8">
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links0" :key="link.text"
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in menuList" :key="link.text"
                         @click="toPage(link.url)" clickable>
                         <q-item-section avatar>
                             <q-icon :name="link.icon" />
@@ -215,59 +202,12 @@ const changeLocale = (lang) => {
 
                     <q-separator inset class="q-my-sm" />
 
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text"
-                        @click="toPage(link.url)" clickable>
-                        <q-item-section avatar>
-                            <q-icon :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator inset class="q-my-sm" />
-
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text"
-                        @click="toPage(link.url)" clickable>
-                        <q-item-section avatar>
-                            <q-icon :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator inset class="q-my-sm" />
-
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text"
-                        @click="toPage(link.url)" clickable>
-                        <q-item-section avatar>
-                            <q-icon :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator inset class="q-my-sm" />
-
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links4" :key="link.text"
-                        @click="toPage(link.url)" clickable>
-                        <q-item-section avatar>
-                            <q-icon :name="link.icon" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>{{ link.text }}</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-separator inset class="q-my-sm" />
-
-                    <q-item class="GNL__drawer-item" v-ripple v-for="link in links5" :key="link.text" clickable>
+                    <q-item class="GNL__drawer-item" v-ripple v-for="link in settingList" :key="link.text" clickable>
                         <q-item-section>
                             <q-item-label>{{ link.text }} <q-icon v-if="link.icon" :name="link.icon" /></q-item-label>
                         </q-item-section>
                     </q-item>
+
 
                     <div class="q-mt-md">
                         <div class="flex flex-center q-gutter-xs">
