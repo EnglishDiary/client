@@ -83,10 +83,10 @@ const checkUserSentence = () => {
     userSentence = userSentence.trim()
 
     if (userSentence == correctSentence) {
-        currentData.value.userResult = 'Great :)'
+        currentData.value.userResult = 'Great!'
         currentData.value.isCorrect = true
     } else {
-        currentData.value.userResult = 'Wrong :('
+        currentData.value.userResult = 'Wrong'
         currentData.value.isCorrect = false
     }
 
@@ -157,7 +157,7 @@ onMounted(() => {
                 <q-item class="text-subtitle1 text-center q-mb-sm cursor-pointer" style="background-color: aliceblue;"
                     clickable @click="toggleTranslation">
                     <span v-if="showTranslation">{{ currentData.translation }}</span>
-                    <span v-else class="text-primary">한국어 문장 보기</span>
+                    <span v-else class="text-primary">Show Hint</span>
                 </q-item>
                 <div class="word-groups q-gutter-xs q-mb-md">
                     <q-btn v-for="(word, index) in currentData.randomWords" :key="word.id"
@@ -187,7 +187,9 @@ onMounted(() => {
             <q-card-section v-if="currentData.userResult" class="q-pa-sm">
                 <div class="result-feedback q-mb-md"
                     :class="{ 'correct': currentData.isCorrect, 'incorrect': !currentData.isCorrect }">
-                    <q-icon :name="currentData.isCorrect ? 'check_circle' : 'cancel'" size="28px" class="q-mr-sm" />
+                    <q-icon :name="currentData.isCorrect ? 'check_circle' : 'cancel'" 
+                            :color="currentData.isCorrect ? 'green' : 'red'"
+                    size="28px" class="q-mr-sm" />
                     <span class="text-subtitle1">{{ currentData.userResult }}</span>
                 </div>
                 <div v-if="!currentData.isCorrect" class="correct-answer q-pa-sm q-mb-md">

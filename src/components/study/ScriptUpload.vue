@@ -35,11 +35,11 @@ const processScript = (script) => {
 
 <template>
     <div class="q-pa-md" style="max-width: 600px">
-        <q-input label="공부할 스크립트" v-model="script" filled type="textarea" 
-            :rules="[val => !!val || '필수 입력 항목입니다']" />
+        <q-input :label="$t('analysisUi.script')" v-model="script" filled type="textarea" 
+            :rules="[val => !!val || $t('validation.requiredInput')]" />
         <q-separator class="q-my-sm" />
-        <q-input label="스크립트 부연설명" v-model="desc" filled type="textarea" />
+        <q-input :label="$t('analysisUi.context')" v-model="desc" filled type="textarea" autogrow/>
 
-        <q-btn @click="uploadScript">등록하기</q-btn>
+        <q-btn @click="uploadScript">{{ $t('common.post') }}</q-btn>
     </div>
 </template>

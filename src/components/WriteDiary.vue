@@ -146,7 +146,7 @@ onMounted(async () => {
                     <q-card class="full-height">
                         <q-card-section>
                             <div>
-                                <q-btn color="primary" label="AI에게 첨삭 요청하기" @click="requestAICorrection"
+                                <q-btn color="primary" :label="$t('diaryUi.askAi')" @click="requestAICorrection"
                                     :loading="isLoading" />
                             </div>
                             <div v-if="revisedVersion" class="q-pa-sm"
@@ -154,7 +154,7 @@ onMounted(async () => {
                                 <div v-html="revisedVersion"></div>
                             </div>
                             <div v-else class="text-grey-6 flex flex-center" style="min-height: 250px;">
-                                AI 첨삭 결과가 여기에 표시됩니다.
+                                {{ $t('diaryUi.aiFeedback') }}
                             </div>
                             <q-btn @click="openTranslationModal" v-if="revisedVersion">해석보기</q-btn>
                         </q-card-section>
@@ -165,14 +165,14 @@ onMounted(async () => {
             <!-- AI 피드백 -->
             <q-card v-if="gptFeedback" class="q-mt-md">
                 <q-card-section>
-                    <div class="text-h6">AI 피드백</div>
+                    <div class="text-h6">AI Feedback</div>
                     <q-separator class="q-my-sm" />
                     <div v-html="gptFeedback"></div>
                 </q-card-section>
             </q-card>
 
             <div class="q-mt-md q-mb-lg">
-                <q-btn color="primary" label="발행" @click="openPublishModal" />
+                <q-btn color="primary" :label="$t('diaryUi.post')" @click="openPublishModal" />
             </div>
 
         </div>
@@ -181,33 +181,30 @@ onMounted(async () => {
         <!-- 발행 모달 -->
         <q-dialog v-model="showPublishModal">
             <q-card style="min-width: 350px">
-                <q-card-section>
-                    <div class="text-h6">다이어리 발행</div>
-                </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                    <q-radio v-model="publishSettings.isPublic" :val=true label="공개" />
+                    <q-radio v-model="publishSettings.isPublic" :val=true :label="$t('diaryUi.public')" />
                     <!-- <q-radio v-model="publishSettings.isPublic" :val=false label="비공개" /> -->
 
-                    <q-select v-model="selectedCategory" :options="categoryOptions" label="카테고리"
+                    <q-select v-model="selectedCategory" :options="categoryOptions" :label="$t('diaryUi.category')"
                         @update:model-value="handleCategoryChange" option-value="id" option-label="name"
                         class="q-mt-md" />
 
                     <div v-if="publishSettings.isPublic === true" class="q-mt-md">
-                        <div class="text-subtitle2">AI 응답 데이터 공개 여부</div>
-                        <q-toggle v-model="publishSettings.showRevisedDiary" label="첨삭된 일기 공개" />
-                        <q-toggle v-model="publishSettings.showFeedback" label="AI 피드백 공개" />
+                        <div class="text-subtitle2">{{ $t('diaryUi.shouldBePublic') }}</div>
+                        <q-toggle v-model="publishSettings.showRevisedDiary" :label="$t('diaryUi.showRevisedDiary')" />
+                        <q-toggle v-model="publishSettings.showFeedback" :label="$t('diaryUi.showFeedback')" />
                     </div>
                 </q-card-section>
 
                 <q-card-section>
-                    <q-uploader accept=".jpg, image/*" label="(선택사항) 썸네일 이미지" multiple :max-files="MAX_FILE_NUMBER"
+                    <q-uploader accept=".jpg, image/*" :label="$t('diaryUi.thumbnail')" multiple :max-files="MAX_FILE_NUMBER"
                         :hide-upload-btn="true" @added="onUploaded" @rejected="onRejected" />
                 </q-card-section>
 
                 <q-card-actions align="right">
-                    <q-btn flat label="취소" color="primary" v-close-popup />
-                    <q-btn flat label="발행" color="primary" @click="publishDiary" v-close-popup />
+                    <q-btn flat :label="$t('diaryUi.cancel')" color="primary" v-close-popup />
+                    <q-btn flat :label="$t('diaryUi.post')" color="primary" @click="publishDiary" v-close-popup />
                 </q-card-actions>
             </q-card>
         </q-dialog>
