@@ -38,8 +38,7 @@ const login = async () => {
             <q-page class="flex flex-center bg-grey-2">
                 <q-card class="q-pa-md shadow-2 my_card" bordered>
                     <q-card-section class="text-center">
-                        <div class="text-grey-9 text-h5 text-weight-bold">Dobi's garden</div>
-                        <div class="text-grey-8">회원정보를 입력해주세요</div>
+                        <div class="text-grey-9 text-h5 text-weight-bold">Dobby's garden</div>
                     </q-card-section>
                     <q-card-section>
                         <q-input dense outlined v-model="userId" label="ID"></q-input>
@@ -48,11 +47,11 @@ const login = async () => {
                     </q-card-section>
                     <q-card-section>
                         <q-btn style="
-  border-radius: 8px;" color="dark" rounded size="md" label="로그인" no-caps class="full-width" @click="login"></q-btn>
+  border-radius: 8px;" color="dark" rounded size="md" :label="$t('loginUi.login')" no-caps class="full-width" @click="login"></q-btn>
                     </q-card-section>
                     <q-card-section class="text-center q-pt-none">
-                        <div class="text-grey-8">계정이 없으신가요?
-                            <a href="/signup" class="text-dark text-weight-bold" style="text-decoration: none">회원가입</a>
+                        <div class="text-grey-8">{{ $t('loginUi.newby') }}
+                            <a href="/signup" class="text-dark text-weight-bold" style="text-decoration: none">{{ $t('loginUi.signup') }}</a>
                         </div>
                     </q-card-section>
 
