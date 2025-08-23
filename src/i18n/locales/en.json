@@ -1,15 +1,74 @@
 {
   "common": {
-    "save": "save!",
-    "cancel": "cancel!",
-    "confirm": "confirm!"
+    "language": "language",
+    "dobbyGarden": "Dobby's Garden",
+    "cancel": "cancel",
+    "save": "save",
+    "post": "post"
+  },    
+  "validation": {
+    "requiredInput": "This is a required field"
   },
   "menu": {
-    "home": "home!!",
-    "about": "hahaha"
+    "analysis": "Sentence Analysis",
+    "quiz": "Writing Quiz",
+    "writeDiary": "Write Diary",
+    "viewDiary": "View Diary",
+    "addWords": "Add Words",
+    "vocabulary": "My Vocabulary",
+    "practiceExpressions": "Expression Practice",
+    "viewExpressions": "View Expressions"
   },
   "user": {
-    "myData": "My Data",
-    "logout": "Logout"
+    "profile": "My Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "noTopic": "No topics registered"
+  },
+    "analysisUi": {
+      "topic": "Study Topic",
+      "addTopic": "Add Study Topic",
+      "addChapter": "Add Chapter",
+      "noTopic": "No topics registered yet",
+      "context": "Additional Explanation",
+      "script": "Script to study",
+      "title": "Title"
+  },
+  "loginUi": {
+    "newby": "Are you new here?",
+    "signup": "Signup",
+    "login": "Login"
+  },
+  "expressionUi": {
+    "myLanguageLabel": "The phrase or sentence you want to write (ex: piece of cake)",
+    "studyLanguageLabel": "Your writing (ex: 식은 죽 먹기)",
+    "askAi": "Ask AI"
+  },
+  "category": {
+    "1": "test data"
+  },
+  "diaryUi": {
+    "askAi": "Request AI for feedback",
+    "aiFeedback": "AI Revision results will be displayed here.",
+    "post": "post",
+    "cancel": "cancel",
+    "public": "public",
+    "private": "private",
+    "category": "category",
+    "shouldBePublic": "Consent to share AI response data",
+    "showRevisedDiary": "Make your diary public",
+    "showFeedback": "Make AI feedback public",
+    "thumbnail": "(option) Thumbnail Image"
+  },
+  "wordScramble": {
+    "title": "Writing Quiz",
+    "level": "Difficulty",
+    "topic": "Topic",
+    "easy": "Easy",
+    "intermediate": "Intermediate",
+    "practiceType": "Practice Type",
+    "numberOfSentences": "Number of Sentences",
+    "start": "start"
   }
+
 }

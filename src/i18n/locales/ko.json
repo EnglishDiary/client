@@ -1,15 +1,72 @@
 {
-  "common": {
-    "save": "저장",
+  "common":{
+    "language": "language",
+    "dobbyGarden": "도비의 정원",
     "cancel": "취소",
-    "confirm": "확인"
+    "save": "저장",
+    "post": "등록"
+  },
+  "validation": {
+    "requiredInput": "필수 입력 항목입니다."
   },
   "menu": {
-    "home": "홈",
-    "about": "소개"
+    "analysis": "영어문장 분석",
+    "quiz": "영작 퀴즈",
+    "writeDiary": "영어일기 쓰기",
+    "viewDiary": "영어일기 보기",
+    "addWords": "영단어 등록",
+    "vocabulary": "나만의 단어장",
+    "practiceExpressions": "표현 영작",
+    "viewExpressions": "표현 보기"
   },
   "user": {
-    "myData": "내정보",
-    "logout": "로그아웃"
+    "profile": "내정보",
+    "logout": "로그아웃",
+    "login": "로그인"
+  },
+  "analysisUi": {
+    "topic": "학습주제",
+    "addTopic": "학습주제 추가",
+    "addChapter": "소단원 추가",
+    "noTopic": "등록된 주제가 없습니다.",
+    "context": "부연설명",
+    "script": "공부할 스크립트",
+    "title": "제목"    
+  },
+  "loginUi": {
+    "newby": "처음이신가요?",
+    "signup": "회원가입",
+    "login": "로그인"
+  },
+  "expressionUi": {
+    "myLanguageLabel": "작문하고 싶은 문장 (예시: 식은 죽 먹기)",
+    "studyLanguageLabel": "당신의 작문 (예시: piece of cake)",
+    "askAi": "AI에게 물어보기"
+  },
+  "category": {
+    "1": "테스트 데이터"
+  },
+  "diaryUi": {
+    "askAi": "AI에게 첨삭 요청",
+    "aiFeedback": "AI 첨삭 결과가 여기에 표시됩니다.",
+    "post": "등록",
+    "cancel": "취소",
+    "public": "공개",
+    "private": "비공개",
+    "category": "카테고리",
+    "shouldBePublic": "AI 응답 데이터 공개 여부",
+    "showRevisedDiary": "첨삭된 일기 공개",
+    "showFeedback": "AI 피드백 공개",    
+    "thumbnail": "(선택사항) 썸네일 이미지"
+  },
+  "wordScramble": {
+    "title": "문장 완성하기",
+    "level": "난이도 선택",
+    "topic": "주제 선택",
+    "easy": "초급",
+    "intermediate": "중급",
+    "practiceType": "연습 유형",
+    "numberOfSentences": "문장 개수",
+    "start": "시작"
   }
 }
